@@ -27,7 +27,7 @@ public class LoanActivity extends FragmentActivity {
 		
 		// The SeekBars
 		
-		SeekBar seekAmount = (SeekBar) findViewById(R.id.loan_seek_duration);
+		SeekBar seekAmount = (SeekBar) findViewById(R.id.loan_seek_amount);
 		seekAmount.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 
 			@Override

@@ -17,6 +17,8 @@
     <string name="group_row_rate_text">Interest Rate: $</string>
     <string name="group_row_rate_text_extra"> / $100 / Meeting</string>
     
+    <string name="currency_symbol">$</string>
+    
     <string name="loan_amount_1">$50</string>
     <string name="loan_amount_2">$100</string>
     <string name="loan_amount_3">$150</string>
