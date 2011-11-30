@@ -64,14 +64,13 @@ public class AddMemberActivity extends FragmentActivity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO: Check for null, put the notes in
 				String n = name.getText().toString();
 				long group = getIntent().getLongExtra(MembersFragment.GROUP_EXTRA, -1);
 				
 				if (group != -1) {
 					MembersDbAdapter dbAdapter = new MembersDbAdapter(AddMemberActivity.this);
 					dbAdapter.open();
-					dbAdapter.createMember(n, group, "test", pic);
+					dbAdapter.createMember(n, group, notes.getText().toString(), pic);
 					dbAdapter.close();
 					
 					setResult(RESULT_OK);

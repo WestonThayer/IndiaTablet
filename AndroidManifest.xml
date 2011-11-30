@@ -31,5 +31,9 @@
             android:name=".AddMemberActivity"
             android:theme="@style/Theme.Sherlock" />
         
+        <activity android:label="@string/app_name"
+            android:name=".LoanActivity"
+            android:theme="@style/Theme.Sherlock" />
+        
     </application>
 </manifest>

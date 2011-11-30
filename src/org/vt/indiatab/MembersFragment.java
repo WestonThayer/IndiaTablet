@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 public class MembersFragment extends Fragment {
@@ -48,6 +49,18 @@ public class MembersFragment extends Fragment {
 		
 		grid.setAdapter(adapter);
 		
+		// Clicking allows for taking out loan, or repaying loan
+		grid.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v, int position,
+					long id) {
+				Intent i = new Intent(getActivity(), LoanActivity.class);
+				startActivityForResult(i, RQ_LOAN);
+			}
+		});
+		
+		// Long press allows for delete
 		grid.setOnItemLongClickListener(new OnItemLongClickListener() {
 
 			@Override
@@ -95,6 +108,7 @@ public class MembersFragment extends Fragment {
 	 */
 	
 	public static final int RQ_ADD_MEMBER = 1;
+	public static final int RQ_LOAN = 2;
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
