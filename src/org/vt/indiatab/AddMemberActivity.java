@@ -1,12 +1,14 @@
 package org.vt.indiatab;
 
+import java.io.ByteArrayOutputStream;
+
 import org.vt.indiatab.data.MembersDbAdapter;
 
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
+import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
@@ -23,7 +25,7 @@ public class AddMemberActivity extends FragmentActivity {
 	
 	private ImageButton image;
 	private EditText name, notes;
-	private String imageFilePath;
+	private byte[] pic;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +71,7 @@ public class AddMemberActivity extends FragmentActivity {
 				if (group != -1) {
 					MembersDbAdapter dbAdapter = new MembersDbAdapter(AddMemberActivity.this);
 					dbAdapter.open();
-					dbAdapter.createMember(n, group, "test", imageFilePath);
+					dbAdapter.createMember(n, group, "test", pic);
 					dbAdapter.close();
 					
 					setResult(RESULT_OK);
@@ -123,7 +125,7 @@ public class AddMemberActivity extends FragmentActivity {
             cursor.moveToFirst();
             
             //Link to the image
-            imageFilePath = cursor.getString(0);
+            String imageFilePath = cursor.getString(0);
             cursor.close();
             
             BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -132,6 +134,11 @@ public class AddMemberActivity extends FragmentActivity {
             opts.outWidth = 100;
             Bitmap bmp = BitmapFactory.decodeFile(imageFilePath, opts);
             image.setImageBitmap(bmp);
+            
+            // Ready it for storage
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bmp.compress(CompressFormat.JPEG, 50, bos); 
+            pic = bos.toByteArray();
 		}
 	}
 }

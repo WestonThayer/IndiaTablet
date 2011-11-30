@@ -13,7 +13,7 @@ public class MembersDbAdapter {
 	public static final String COL_NAME = "name";
 	public static final String COL_GROUP = "group_id";
 	public static final String COL_NOTES = "notes";
-	public static final String COL_PIC_PATH = "pic_path";
+	public static final String COL_PIC = "pic";
 	public static final String COL_LOAN_AMNT = "loan_amount";
 	public static final String COL_LOAN_REASON = "loan_reason";
 	public static final String COL_LOAN_PROG = "loan_progress";
@@ -40,12 +40,12 @@ public class MembersDbAdapter {
 	 * Create, update, and delete member rows.
 	 */
 	
-	public long createMember(String name, long group, String notes, String picPath) {
+	public long createMember(String name, long group, String notes, byte[] pic) {
 		ContentValues values = new ContentValues();
 		values.put(COL_NAME, name);
 		values.put(COL_GROUP, group);
 		values.put(COL_NOTES, notes);
-		values.put(COL_PIC_PATH, picPath);
+		values.put(COL_PIC, pic);
 		
 		// Initially, nobody has a loan out
 		values.put(COL_LOAN_DURATION, -1);
@@ -109,7 +109,7 @@ public class MembersDbAdapter {
 	 */
 	
 	public Cursor fetchMember(long id) {
-		Cursor c = db.query(true, TABLE_NAME, new String[] {COL_ID, COL_NAME, COL_GROUP, COL_NOTES, COL_PIC_PATH},
+		Cursor c = db.query(true, TABLE_NAME, new String[] {COL_ID, COL_NAME, COL_GROUP, COL_NOTES, COL_PIC},
 				COL_ID + "=" + id, null, null, null, null, null);
 		if (c != null) {
 			c.moveToFirst();
@@ -124,7 +124,7 @@ public class MembersDbAdapter {
 				COL_NAME,
 				COL_LOAN_PROG,
 				COL_LOAN_DURATION,
-				COL_PIC_PATH
+				COL_PIC
 				},
 				COL_GROUP + "=" + group, null, null, null, null, null);
 		if (c != null) {

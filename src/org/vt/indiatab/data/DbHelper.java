@@ -15,7 +15,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			MembersDbAdapter.COL_NAME + " text not null, " +
 			MembersDbAdapter.COL_GROUP + " integer, " +
 			MembersDbAdapter.COL_NOTES + " text, " +
-			MembersDbAdapter.COL_PIC_PATH + " text, " +
+			MembersDbAdapter.COL_PIC + " blob, " +
 			MembersDbAdapter.COL_LOAN_AMNT + " integer, " +
 			MembersDbAdapter.COL_LOAN_REASON + " text, " + //update this later
 			MembersDbAdapter.COL_LOAN_PROG + " integer, " +
