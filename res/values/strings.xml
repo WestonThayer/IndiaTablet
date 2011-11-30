@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">FinLit</string>
+
+    <string name="homeactivity_title">All Groups</string>
+    <string name="groupfragment_add">Add Group</string>
+    
+    <string name="group_add_desc">Specify details and press OK</string>
+    <string name="type_name_here">Group name...</string>
+    <string name="type_dues_here">Amount due from each member each meeting...</string>
+    <string name="type_fees_here">Amount charged by accountant each meeting...</string>
+    <string name="type_rate_here">Interest rate: $X / $100 / Meeting...</string>
+    
+    <string name="group_row_dues_text">Member Dues: $</string>
+    <string name="group_row_fees_text">Accountant Fees: $</string>
+    <string name="group_row_rate_text">Interest Rate: $</string>
+    <string name="group_row_rate_text_extra"> / $100 / Meeting</string>
+</resources>

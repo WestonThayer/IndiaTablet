@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+	>
+	<RelativeLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="1"
+	    >
+	    <ImageButton android:id="@+id/add_member_image"
+		    android:layout_width="175dp"
+		    android:layout_height="175dp"
+		    android:layout_margin="15dp"
+		    android:padding="25dp"
+		    android:scaleType="fitXY"
+		    android:src="@drawable/missing_photo" />
+		<EditText android:id="@+id/add_member_name"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_toRightOf="@id/add_member_image"
+		    android:hint="Type member name..." />
+		<EditText android:id="@+id/add_member_notes"
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:layout_toRightOf="@id/add_member_image"
+		    android:layout_below="@id/add_member_name"
+		    android:hint="Type notes (optional)..." />
+	</RelativeLayout>
+	<LinearLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:orientation="horizontal"
+	    android:padding="5dp"
+	    android:background="#888"
+	    >
+	    <Button android:id="@+id/add_member_ok"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:text="OK" />
+	    <Button android:id="@+id/add_member_cancel"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_weight="1"
+		    android:text="Cancel" />
+	</LinearLayout>
+</LinearLayout>
