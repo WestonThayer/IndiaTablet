@@ -12,25 +12,28 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             >
-            <!-- Don't forget to input restrict these guys someday -->
 			<EditText android:id="@+id/group_add_name"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
+			    android:inputType="textPersonName|textNoSuggestions"
 			    android:hint="@string/type_name_here" />
 			<EditText android:id="@+id/group_add_dues"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:layout_below="@id/group_add_name"
+			    android:inputType="number"
 			    android:hint="@string/type_dues_here" />
 			<EditText android:id="@+id/group_add_fees"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:layout_below="@id/group_add_dues"
+			    android:inputType="number"
 			    android:hint="@string/type_fees_here" />
 			<EditText android:id="@+id/group_add_rate"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:layout_below="@id/group_add_fees"
+			    android:inputType="number"
 			    android:hint="@string/type_rate_here" />
 			</RelativeLayout>
 		</ScrollView>

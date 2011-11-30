@@ -30,6 +30,9 @@ public class TabsActivity extends FragmentActivity {
 		
 		ActionBar actionBar = getSupportActionBar();
 		
+		String groupName = getIntent().getStringExtra(GroupFragment.GROUP_NAME_EXTRA);
+		actionBar.setTitle(groupName);
+		
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		

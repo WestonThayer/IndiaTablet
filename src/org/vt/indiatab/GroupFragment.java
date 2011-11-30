@@ -20,10 +20,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
 public class GroupFragment extends Fragment {
+	
+	public static final String GROUP_NAME_EXTRA = "group_name_extra";
 	
 	private ListView lv;
 	private SimpleCursorAdapter adapter;
@@ -52,6 +55,10 @@ public class GroupFragment extends Fragment {
 				//start the new activity
 				Intent i = new Intent(getActivity(), TabsActivity.class);
 				i.putExtra(MembersFragment.GROUP_EXTRA, id);
+				
+				TextView name = (TextView) v.findViewById(R.id.group_row_name);
+				i.putExtra(GROUP_NAME_EXTRA, name.getText());
+				
 				getActivity().startActivity(i);
 			}
 		});
