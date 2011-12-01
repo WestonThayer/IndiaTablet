@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.ActionBar.Tab;
+import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.Window;
@@ -67,8 +68,20 @@ public class TabsActivity extends FragmentActivity {
 	}
 	
 	/*
-	 * Handle the up structure home button behavior
+	 * Handle the up structure home button behavior and add the common actions
 	 */
+	
+	private static final int MENU_ADVANCE = 1;
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_ADVANCE, Menu.FIRST, "Advance")
+				.setIcon(android.R.drawable.ic_menu_directions)
+				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		
+		super.onCreateOptionsMenu(menu);
+		return true;
+	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -76,6 +89,8 @@ public class TabsActivity extends FragmentActivity {
 	        case android.R.id.home:
 	            finish();
 	            return true;
+	        case MENU_ADVANCE:
+	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }

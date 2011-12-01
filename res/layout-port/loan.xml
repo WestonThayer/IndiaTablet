@@ -9,27 +9,27 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:layout_weight="1"
-	    android:orientation="horizontal"
+	    android:orientation="vertical"
 	    android:padding="15dp"
 	    >
 	    <LinearLayout
-	        android:layout_width="100dp"
-	        android:layout_height="fill_parent"
-	        android:orientation="vertical"
-	        android:paddingRight="15dp"
+	        android:layout_width="fill_parent"
+	        android:layout_height="100dp"
+	        android:orientation="horizontal"
+	        android:paddingBottom="15dp"
 	        >
 	        <ImageView android:id="@+id/loan_image"
 		        android:layout_width="fill_parent"
 		        android:layout_height="fill_parent"
 		        android:layout_weight="1"
-		        android:paddingBottom="5dp"
+		        android:paddingRight="5dp"
 		        android:scaleType="fitXY"
 		        android:src="@drawable/missing_photo" />
 		    <Button android:id="@+id/loan_reason"
 		        android:layout_width="fill_parent"
 		        android:layout_height="fill_parent"
 		        android:layout_weight="1"
-		        android:paddingTop="5dp"
+		        android:paddingLeft="5dp"
 		        android:text="Reason" />
 	    </LinearLayout>
 	    <RelativeLayout

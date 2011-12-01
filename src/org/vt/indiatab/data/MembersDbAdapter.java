@@ -109,7 +109,17 @@ public class MembersDbAdapter {
 	 */
 	
 	public Cursor fetchMember(long id) {
-		Cursor c = db.query(true, TABLE_NAME, new String[] {COL_ID, COL_NAME, COL_GROUP, COL_NOTES, COL_PIC},
+		Cursor c = db.query(true, TABLE_NAME, new String[] {
+				COL_ID,
+				COL_NAME,
+				COL_GROUP,
+				COL_NOTES,
+				COL_PIC,
+				COL_LOAN_AMNT,
+				COL_LOAN_PROG,
+				COL_LOAN_DURATION,
+				COL_LOAN_REASON
+				},
 				COL_ID + "=" + id, null, null, null, null, null);
 		if (c != null) {
 			c.moveToFirst();

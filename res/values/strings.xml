@@ -18,18 +18,48 @@
     <string name="group_row_rate_text_extra"> / $100 / Meeting</string>
     
     <string name="currency_symbol">$</string>
+    <string name="loan_for">for</string>
+    <string name="loan_duration_unit">Sessions</string>
     
-    <string name="loan_amount_1">$50</string>
-    <string name="loan_amount_2">$100</string>
-    <string name="loan_amount_3">$150</string>
-    <string name="loan_amount_4">$200</string>
-    <string name="loan_amount_5">$250</string>
-    <string name="loan_amount_6">$500</string>
-    <string name="loan_amount_7">$1000</string>
-    <string name="loan_amount_8">$1500</string>
-    <string name="loan_amount_9">$2000</string>
-    <string name="loan_amount_10">$3000</string>
-    <string name="loan_amount_11">$4000</string>
-    <string name="loan_amount_12">$5000</string>
+    <integer-array name="loan_amounts_linear">
+        <item>50</item>
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>300</item>
+        <item>400</item>
+        <item>500</item>
+        <item>600</item>
+        <item>700</item>
+        <item>800</item>
+        <item>1000</item>
+    </integer-array>
+    
+	<integer-array name="loan_amounts_custom">
+        <item>50</item>
+        <item>100</item>
+        <item>150</item>
+        <item>200</item>
+        <item>250</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>1500</item>
+        <item>2000</item>
+        <item>5000</item>
+        <item>10000</item>
+        <item>15000</item>
+    </integer-array>
+    
+	<integer-array name="loan_durations">
+	    <item>1</item>
+	    <item>2</item>
+	    <item>3</item>
+	    <item>4</item>
+	    <item>5</item>
+	    <item>6</item>
+	</integer-array>
+	
+	<string name="one_loan_at_a_time">A member cannot take multiple loans</string>
 
 </resources>

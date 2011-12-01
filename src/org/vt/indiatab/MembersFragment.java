@@ -1,5 +1,7 @@
 package org.vt.indiatab;
 
+import org.vt.indiatab.data.MembersDbAdapter;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
@@ -55,8 +58,32 @@ public class MembersFragment extends Fragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
-				Intent i = new Intent(getActivity(), LoanActivity.class);
-				startActivityForResult(i, RQ_LOAN);
+				// Decide if they can take out a loan or if a loan is due
+				
+				MembersDbAdapter db = new MembersDbAdapter(getActivity());
+				db.open();
+				Cursor c = db.fetchMember(id);
+				
+				int durationC = c.getColumnIndex(MembersDbAdapter.COL_LOAN_DURATION);
+				int duration = c.getInt(durationC);
+				int progressC = c.getColumnIndex(MembersDbAdapter.COL_LOAN_PROG);
+				int progress = c.getInt(progressC);
+				
+				c.close();
+				db.close();
+				
+				if (duration == -1) {
+					Intent i = new Intent(getActivity(), LoanActivity.class);
+					i.putExtra(LoanActivity.MEMBER_ID_EXTRA, id);
+					startActivityForResult(i, RQ_LOAN);
+				}
+				else if (progress < duration) {
+					Toast.makeText(getActivity(), R.string.one_loan_at_a_time,
+							Toast.LENGTH_SHORT).show();
+				}
+				else {
+					
+				}
 			}
 		});
 		
@@ -114,9 +141,21 @@ public class MembersFragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		// Did they add a member? Refresh if so.
-		if (requestCode == RQ_ADD_MEMBER && resultCode == Activity.RESULT_OK) {
-			adapter.changeCursor(((TabsActivity) getActivity()).dbAdapter.fetchMembers(group));
+		switch (requestCode) {
+		case RQ_ADD_MEMBER:
+			if (resultCode == Activity.RESULT_OK) {
+				adapter.changeCursor(((TabsActivity) getActivity())
+						.dbAdapter.fetchMembers(group));
+			}
+			return;
+		case RQ_LOAN:
+			if (resultCode == Activity.RESULT_OK) {
+				adapter.changeCursor(((TabsActivity) getActivity())
+						.dbAdapter.fetchMembers(group));
+			}
+			return;
+		default:
+			return;
 		}
 	}
 	
