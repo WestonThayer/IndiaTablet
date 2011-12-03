@@ -9,16 +9,17 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@color/overview_header"
         >
-        <TextView style="@style/overview_row_text"
+        <TextView style="@style/overview_first_row_text"
             android:text="Meeting" />
-        <TextView style="@style/overview_row_text"
+        <TextView style="@style/overview_first_row_text"
             android:text="pre-Pot" />
-        <TextView style="@style/overview_row_text"
+        <TextView style="@style/overview_first_row_text"
             android:text="In" />
-        <TextView style="@style/overview_row_text"
+        <TextView style="@style/overview_first_row_text"
             android:text="Out" />
-        <TextView style="@style/overview_row_text"
+        <TextView style="@style/overview_first_row_text"
             android:text="post-Pot" />
     </LinearLayout>
     <ListView android:id="@+id/overview_listview"
