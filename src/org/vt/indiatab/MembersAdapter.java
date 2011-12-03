@@ -33,16 +33,23 @@ public class MembersAdapter extends CursorAdapter {
 		Holder holder = (Holder) view.getTag();
 		
 		// update the progress
-		int progC = cursor.getColumnIndex(MembersDbAdapter.COL_LOAN_PROG);
-		int durationC = cursor.getColumnIndex(MembersDbAdapter.COL_LOAN_DURATION);
-		int duration = cursor.getInt(durationC);
+		int prog = cursor.getInt(cursor.getColumnIndex(MembersDbAdapter.COL_LOAN_PROG));
+		int duration = cursor.getInt(cursor.getColumnIndex(MembersDbAdapter.COL_LOAN_DURATION));
 		if (duration != -1) { // they DO have a loan out
 			holder.progress.setVisibility(View.VISIBLE);
-			holder.progress.setMax(cursor.getInt(durationC));
-			holder.progress.setProgress(cursor.getInt(progC));
+			holder.progress.setMax(duration);
+			holder.progress.setProgress(prog);
+			
+			if (prog == duration) {
+				view.setBackgroundResource(R.color.loan_due);
+			}
+			else {
+				view.setBackgroundColor(0);
+			}
 		}
 		else { // they DON'T have a loan out
 			holder.progress.setVisibility(View.INVISIBLE);
+			view.setBackgroundColor(0);
 		}
 		
 		// update the name

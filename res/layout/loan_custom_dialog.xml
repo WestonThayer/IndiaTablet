@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+    <ScrollView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <RelativeLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+			<EditText android:id="@+id/loan_custom_dialog_amount"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:inputType="number"
+			    android:hint="@string/type_amount_here" />
+			<EditText android:id="@+id/loan_custom_dialog_duration"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:layout_below="@id/loan_custom_dialog_amount"
+			    android:inputType="number"
+			    android:hint="@string/type_duration_here" />
+			</RelativeLayout>
+		</ScrollView>
+</RelativeLayout>

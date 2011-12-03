@@ -1,15 +1,21 @@
 package org.vt.indiatab;
 
+import org.vt.indiatab.data.GroupsDbAdapter;
+import org.vt.indiatab.data.MeetingsDbAdapter;
 import org.vt.indiatab.data.MembersDbAdapter;
+import org.vt.indiatab.data.SimulatorDbAdapter;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.ActionBar.Tab;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.Window;
+import android.widget.Toast;
 
 public class TabsActivity extends FragmentActivity {
 
@@ -19,6 +25,9 @@ public class TabsActivity extends FragmentActivity {
 	
 	private ViewPager  mViewPager;
     private TabsAdapter mTabsAdapter;
+    private ActionBar actionBar;
+    private Tab tab1, tab2, tab3;
+    private long group;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -26,10 +35,12 @@ public class TabsActivity extends FragmentActivity {
 		setContentView(R.layout.tabs);
 		requestWindowFeature(Window.FEATURE_ACTION_BAR_ITEM_TEXT);
 		
+		group = getIntent().getLongExtra(MembersFragment.GROUP_EXTRA, -1);
+		
 		dbAdapter = new MembersDbAdapter(this);
 		dbAdapter.open();
 		
-		ActionBar actionBar = getSupportActionBar();
+		actionBar = getSupportActionBar();
 		
 		String groupName = getIntent().getStringExtra(GroupFragment.GROUP_NAME_EXTRA);
 		actionBar.setTitle(groupName);
@@ -37,9 +48,9 @@ public class TabsActivity extends FragmentActivity {
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		
-		Tab tab1 = actionBar.newTab().setText("Members");
-		Tab tab2 = actionBar.newTab().setText("Overview");
-		Tab tab3 = actionBar.newTab().setText("Simulator");
+		tab1 = actionBar.newTab().setText("Members");
+		tab2 = actionBar.newTab().setText("Overview");
+		tab3 = actionBar.newTab().setText("Simulator");
 		
 		mViewPager = (ViewPager)findViewById(R.id.pager);
 		
@@ -71,12 +82,15 @@ public class TabsActivity extends FragmentActivity {
 	 * Handle the up structure home button behavior and add the common actions
 	 */
 	
-	private static final int MENU_ADVANCE = 1;
+	public static final int MENU_ADVANCE = 0;
+	public static final int MENU_ADD = 1;
+	public static final int MENU_DELETE_MEETINGS = 2;
+	public static final int MENU_DELETE_SIMULATIONS = 3;
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_ADVANCE, Menu.FIRST, "Advance")
-				.setIcon(android.R.drawable.ic_menu_directions)
+				.setIcon(R.drawable.next_white)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		
 		super.onCreateOptionsMenu(menu);
@@ -90,9 +104,90 @@ public class TabsActivity extends FragmentActivity {
 	            finish();
 	            return true;
 	        case MENU_ADVANCE:
+	        	if (dbAdapter.isMemberLoanDue(group)) {
+	        		// Loans are still out. Make them pay
+	        		Toast.makeText(this, R.string.outstanding_loans,
+	        				Toast.LENGTH_SHORT).show();
+	        		actionBar.selectTab(tab1);
+	        		
+	        		return true;
+	        	}
+	        	
+	        	MeetingsDbAdapter mdb = new MeetingsDbAdapter(this);
+	        	mdb.open();
+	        	
+	        	// (Last meetings POST_POT) + (#Members * Dues) - Fees
+	        	
+	        	GroupsDbAdapter gdb = new GroupsDbAdapter(this);
+	        	gdb.open();
+	        	Cursor c = gdb.fetchGroup(group);
+	        	int dues = c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_DUES));
+	        	int fees = c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_FEES));
+	        	c.close();
+	        	gdb.close();
+	        	
+	        	int numMembers = dbAdapter.getMemberCount(group);
+	        	
+	        	if (numMembers != 0) {
+	        		// Create the next meeting
+		        	if (mdb.isFirstMeeting(group)) {
+		        		mdb.createMeeting(1, group, (numMembers * dues) - fees);
+		        	}
+		        	else {
+		        		c = mdb.getLatestMeeting(group);
+		        		int postPotC = c.getColumnIndex(MeetingsDbAdapter.COL_POST_POT);
+		        		int postPot = c.getInt(postPotC);
+		        		
+		        		mdb.createMeeting(mdb.getNextMeetingNumber(c), group,
+		        				postPot + (numMembers * dues) - fees);
+		        		
+		        		c.close();
+		        	}
+		        	// Move all members with loans out forward
+		        	dbAdapter.advanceMemberLoans(group);
+		        	
+		        	notifyTabs(mdb, null);
+		        	
+		        	// Inform the user that we've moved on
+		        	String currency = getResources().getString(R.string.currency_symbol);
+		        	String intro = getResources().getString(R.string.meeting_advanced);
+		        	
+		        	Toast.makeText(this, intro + " " + currency +
+		        			(numMembers * dues), Toast.LENGTH_SHORT).show();
+	        	}
+	        	else {
+	        		Toast.makeText(this, R.string.no_members_yet,
+	        				Toast.LENGTH_SHORT).show();
+	        	}
+	        	
+	        	mdb.close();
+	        	
 	        	return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
+	}
+	
+	public void notifyTabs(MeetingsDbAdapter mdb, SimulatorDbAdapter sdb) {
+		/*
+    	 * This was no fun at all. The Fragment's tag is auto generated
+    	 * by ActionBarSherlock's FragmentPagerAdapter using the
+    	 * actual ViewPager's id and the tab's position. Terrible.
+    	 */
+		
+		// Members Tab
+		String tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 0);
+    	((MembersFragment) getSupportFragmentManager().findFragmentByTag(tag))
+    				.changeAdapterCursor(null);
+		
+    	// Overview Tab
+    	tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 1);
+    	((OverviewFragment) getSupportFragmentManager().findFragmentByTag(tag))
+    				.changeAdapterCursor(mdb);
+    	
+    	// Simulator Tab
+    	tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 2);
+    	((OverviewFragment) getSupportFragmentManager().findFragmentByTag(tag))
+    				.changeAdapterCursor(mdb);
 	}
 }

@@ -18,12 +18,15 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_below="@id/member_grid_item_progress"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitCenter"
         android:src="@drawable/missing_photo" />
     <TextView android:id="@+id/member_grid_item_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/member_grid_item_image"
         android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
         android:textColor="#fff"
         android:text="Unknown" />
 </RelativeLayout>

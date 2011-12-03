@@ -3,14 +3,26 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     >
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
-        android:background="#888"
-        android:textColor="#000"
-        android:textSize="20dp"
-        android:text="$1,234" />
+        android:orientation="horizontal"
+        >
+        <TextView style="@style/overview_row_text"
+            android:text="Meeting" />
+        <TextView style="@style/overview_row_text"
+            android:text="pre-Pot" />
+        <TextView style="@style/overview_row_text"
+            android:text="In" />
+        <TextView style="@style/overview_row_text"
+            android:text="Out" />
+        <TextView style="@style/overview_row_text"
+            android:text="post-Pot" />
+    </LinearLayout>
+    <ListView android:id="@+id/overview_listview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
 </LinearLayout>

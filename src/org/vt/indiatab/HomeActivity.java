@@ -5,7 +5,6 @@ import org.vt.indiatab.data.GroupsDbAdapter;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.Window;
 
 public class HomeActivity extends FragmentActivity {
 
@@ -14,7 +13,6 @@ public class HomeActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_ACTION_BAR_ITEM_TEXT);
         setContentView(R.layout.home);
         
         ActionBar actionBar = getSupportActionBar();

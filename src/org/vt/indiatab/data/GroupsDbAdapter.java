@@ -64,6 +64,12 @@ public class GroupsDbAdapter {
 		mDb.deleteGroupMembers(id);
 		mDb.close();
 		
+		// Delete the group's meetings
+		MeetingsDbAdapter mdb = new MeetingsDbAdapter(ctx);
+		mdb.open();
+		mdb.deleteMeetings(id);
+		mdb.close();
+		
 		return db.delete(TABLE_NAME, COL_ID + "=" + id, null) > 0;
 	}
 	

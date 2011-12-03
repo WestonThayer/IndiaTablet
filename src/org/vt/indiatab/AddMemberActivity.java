@@ -45,6 +45,14 @@ public class AddMemberActivity extends FragmentActivity {
 		name = (EditText) findViewById(R.id.add_member_name);
 		notes = (EditText) findViewById(R.id.add_member_notes);
 		
+		// Restore the image if possible
+		if (savedInstanceState != null) {
+			pic = savedInstanceState.getByteArray("pic");
+			if (pic != null) {
+				image.setImageBitmap(BitmapFactory.decodeByteArray(pic, 0, pic.length));
+			}
+		}
+		
 		// The image launches the gallery, and gets the results back
 		image.setOnClickListener(new OnClickListener() {
 
@@ -89,10 +97,16 @@ public class AddMemberActivity extends FragmentActivity {
 		});
 	}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putByteArray("pic", pic);
+		super.onSaveInstanceState(outState);
+	}
+	
 	/*
 	 * Handle the up structure home button behavior
 	 */
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
@@ -128,7 +142,7 @@ public class AddMemberActivity extends FragmentActivity {
             cursor.close();
             
             BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inSampleSize = 8;
+            opts.inSampleSize = 4;
             opts.outHeight = 100;
             opts.outWidth = 100;
             Bitmap bmp = BitmapFactory.decodeFile(imageFilePath, opts);
@@ -136,7 +150,7 @@ public class AddMemberActivity extends FragmentActivity {
             
             // Ready it for storage
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            bmp.compress(CompressFormat.JPEG, 50, bos); 
+            bmp.compress(CompressFormat.JPEG, 90, bos); 
             pic = bos.toByteArray();
 		}
 	}

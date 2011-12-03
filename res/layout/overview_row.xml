@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+    <TextView android:id="@+id/overview_row_meeting"
+        style="@style/overview_row_text" />
+    <TextView android:id="@+id/overview_row_prepot"
+        style="@style/overview_row_text" />
+    <TextView android:id="@+id/overview_row_in"
+        style="@style/overview_row_text" />
+    <TextView android:id="@+id/overview_row_out"
+        style="@style/overview_row_text" />
+    <TextView android:id="@+id/overview_row_postpot"
+        style="@style/overview_row_text" />
+</LinearLayout>

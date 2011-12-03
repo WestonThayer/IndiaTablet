@@ -28,6 +28,26 @@ public class DbHelper extends SQLiteOpenHelper {
 			GroupsDbAdapter.COL_DUES + " integer, " +
 			GroupsDbAdapter.COL_FEES + " integer, " +
 			GroupsDbAdapter.COL_RATE + " integer);";
+	
+	private static final String DB_CREATE_3 = "create table " +
+			MeetingsDbAdapter.TABLE_NAME + " (" +
+			MeetingsDbAdapter.COL_ID + " integer primary key autoincrement, " +
+			MeetingsDbAdapter.COL_MEETING_NUM + " integer, " +
+			MeetingsDbAdapter.COL_GROUP + " integer, " +
+			MeetingsDbAdapter.COL_INIT_POT + " integer, " +
+			MeetingsDbAdapter.COL_LOANS_IN + " integer, " +
+			MeetingsDbAdapter.COL_LOANS_OUT + " integer, " +
+			MeetingsDbAdapter.COL_POST_POT + " integer);";
+	
+	private static final String DB_CREATE_4 = "create table " +
+		SimulatorDbAdapter.TABLE_NAME + " (" +
+		SimulatorDbAdapter.COL_ID + " integer primary key autoincrement, " +
+		SimulatorDbAdapter.COL_MEETING_NUM + " integer, " +
+		SimulatorDbAdapter.COL_GROUP + " integer, " +
+		SimulatorDbAdapter.COL_INIT_POT + " integer, " +
+		SimulatorDbAdapter.COL_LOANS_IN + " integer, " +
+		SimulatorDbAdapter.COL_LOANS_OUT + " integer, " +
+		SimulatorDbAdapter.COL_POST_POT + " integer);";
 
 	public DbHelper(Context context) {
 		super(context, DB_NAME, null, DB_VERSION);
@@ -37,12 +57,16 @@ public class DbHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(DB_CREATE_1);
 		db.execSQL(DB_CREATE_2);
+		db.execSQL(DB_CREATE_3);
+		db.execSQL(DB_CREATE_4);
 	}
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE IF EXISTS " + MembersDbAdapter.TABLE_NAME);
 		db.execSQL("DROP TABLE IF EXISTS " + GroupsDbAdapter.TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + MeetingsDbAdapter.TABLE_NAME);
+		db.execSQL("DROP TABLE IF EXISTS " + SimulatorDbAdapter.TABLE_NAME);
 		onCreate(db);
 	}
 }

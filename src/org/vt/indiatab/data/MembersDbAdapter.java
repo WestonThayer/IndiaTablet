@@ -48,6 +48,9 @@ public class MembersDbAdapter {
 		values.put(COL_PIC, pic);
 		
 		// Initially, nobody has a loan out
+		values.put(COL_LOAN_AMNT, 0);
+		values.put(COL_LOAN_REASON, "reason");
+		values.put(COL_LOAN_PROG, 0);
 		values.put(COL_LOAN_DURATION, -1);
 		
 		return db.insert(TABLE_NAME, null, values);
@@ -82,16 +85,44 @@ public class MembersDbAdapter {
 		return db.update(TABLE_NAME, values, COL_ID + "=" + id, null) > 0;
 	}
 	
-	/**
-	 * Notify a member that they're closer to having a due loan.
-	 * 
-	 * @param id		The Row ID
-	 * @param progress	How far they are into their loan
-	 * @return			True if successful
-	 */
-	public boolean updateMemberLoan(long id, int progress) {
+	public boolean advanceMemberLoans(long group) {
+		Cursor c = fetchOutstandingMembers(group);
+		if (c.getCount() > 0) {
+			do {
+				long id = c.getLong(c.getColumnIndex(COL_ID));
+				int cProg = c.getInt(c.getColumnIndex(COL_LOAN_PROG));
+				
+				ContentValues values = new ContentValues();
+				values.put(COL_LOAN_PROG, cProg + 1);
+				
+				if (!(db.update(TABLE_NAME, values, COL_ID + "=" + id, null) > 0)) {
+					return false;
+				}
+			}
+			while (c.moveToNext());
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean absolveMemberLoans(long group) {
 		ContentValues values = new ContentValues();
-		values.put(COL_LOAN_PROG, progress);
+		values.put(COL_LOAN_AMNT, 0);
+		values.put(COL_LOAN_REASON, "reason");
+		values.put(COL_LOAN_PROG, 0);
+		values.put(COL_LOAN_DURATION, -1);
+		
+		return db.update(TABLE_NAME, values, COL_GROUP + "=" + group, null) > 0;
+	}
+	
+	public boolean payMemberLoans(long id) {
+		ContentValues values = new ContentValues();
+		values.put(COL_LOAN_AMNT, 0);
+		values.put(COL_LOAN_REASON, "reason");
+		values.put(COL_LOAN_PROG, 0);
+		values.put(COL_LOAN_DURATION, -1);
 		
 		return db.update(TABLE_NAME, values, COL_ID + "=" + id, null) > 0;
 	}
@@ -142,5 +173,43 @@ public class MembersDbAdapter {
 		}
 		
 		return c;
+	}
+	
+	public Cursor fetchOutstandingMembers(long group) {
+		Cursor c = db.query(TABLE_NAME, new String[] {
+				COL_ID,
+				COL_NAME,
+				COL_LOAN_AMNT,
+				COL_LOAN_REASON,
+				COL_LOAN_PROG,
+				COL_LOAN_DURATION,
+				COL_PIC
+				},
+				COL_GROUP + "=" + group, null, null, null, null, null);
+		if (c != null) {
+			c.moveToFirst();
+		}
+		
+		return c;
+	}
+	
+	public int getMemberCount(long group) {
+		Cursor c = fetchMembers(group);
+		
+		return c.getCount();
+	}
+	
+	public boolean isMemberLoanDue(long group) {
+		Cursor c = db.query(TABLE_NAME, new String[] {
+				COL_LOAN_PROG,
+				COL_LOAN_DURATION
+				},
+				COL_GROUP + "=" + group + " AND " + COL_LOAN_PROG + "=" + COL_LOAN_DURATION,
+				null, null, null, null, null);
+		if (c != null) {
+			c.moveToFirst();
+		}
+		
+		return c.getCount() > 0;
 	}
 }

@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
@@ -113,9 +114,9 @@ public class GroupFragment extends Fragment {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		menu.add(0, MENU_ADD, 0, R.string.groupfragment_add).setShowAsAction(
-				MenuItem.SHOW_AS_ACTION_ALWAYS |
-				MenuItem.SHOW_AS_ACTION_WITH_TEXT);;
+		menu.add(0, MENU_ADD, 0, R.string.groupfragment_add)
+			.setIcon(R.drawable.add_group_white)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		
 		super.onCreateOptionsMenu(menu, inflater);
 	}
@@ -159,13 +160,7 @@ public class GroupFragment extends Fragment {
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
 			.setTitle("Create Group")
-			.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dismiss();
-				}
-			});
+			.setNegativeButton("Cancel", null);
 			
 			LayoutInflater inflater = getActivity().getLayoutInflater();
 			View v = inflater.inflate(R.layout.group_add, null, false);
@@ -201,17 +196,21 @@ public class GroupFragment extends Fragment {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					HomeActivity a = ((HomeActivity) getActivity());
-					GroupFragment f = (GroupFragment) getTargetFragment();
-					
-					a.dbAdapter.createGroup(
-							name.getText().toString(),
-							Integer.parseInt(dues.getText().toString()),
-							Integer.parseInt(fees.getText().toString()),
-							Integer.parseInt(rate.getText().toString())
-							);
-					f.adapter.changeCursor(a.dbAdapter.fetchGroups());
-					
-					dismiss();
+					try {
+						GroupFragment f = (GroupFragment) getTargetFragment();
+						
+						a.dbAdapter.createGroup(
+								name.getText().toString(),
+								Integer.parseInt(dues.getText().toString()),
+								Integer.parseInt(fees.getText().toString()),
+								Integer.parseInt(rate.getText().toString())
+								);
+						f.adapter.changeCursor(a.dbAdapter.fetchGroups());
+					}
+					catch (NumberFormatException e) {
+						Toast.makeText(a, R.string.number_format_exception,
+								Toast.LENGTH_SHORT).show();
+					}
 				}
 			});
 			
@@ -265,13 +264,7 @@ public class GroupFragment extends Fragment {
 							f.adapter.changeCursor(a.dbAdapter.fetchGroups());
 						}
 					})
-					.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dismiss();
-						}
-					})
+					.setNegativeButton("Cancel", null)
 					.create();
 		}
 	}

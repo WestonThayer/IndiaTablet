@@ -23,7 +23,7 @@
 		        android:layout_height="fill_parent"
 		        android:layout_weight="1"
 		        android:paddingRight="5dp"
-		        android:scaleType="fitXY"
+		        android:scaleType="fitCenter"
 		        android:src="@drawable/missing_photo" />
 		    <Button android:id="@+id/loan_reason"
 		        android:layout_width="fill_parent"
@@ -37,43 +37,45 @@
 	        android:layout_height="fill_parent"
 	        android:layout_weight="1"
 	        >
+		    <TextView android:id="@+id/loan_seek_amount_feed"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_alignParentLeft="true"
+		        android:textStyle="bold"
+		        android:textSize="24dp" />
+		    <TextView android:id="@+id/loan_amount_avilable"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentRight="true"
+	            android:layout_alignBaseline="@id/loan_seek_amount_feed"
+	            android:textSize="24dp" />
 		    <SeekBar android:id="@+id/loan_seek_amount"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:layout_alignParentTop="true"
+		        android:layout_below="@id/loan_seek_amount_feed"
 		        android:max="11"
 		        android:progress="0" />
-		    <RelativeLayout
+		    <TextView android:id="@+id/loan_for"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_centerInParent="true"
-		        >
-			    <TextView android:id="@+id/loan_seek_amount_feed"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerHorizontal="true"
-			        android:textStyle="bold"
-			        android:textSize="24dp" />
-			    <TextView android:id="@+id/loan_for"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_below="@id/loan_seek_amount_feed"
-			        android:layout_centerHorizontal="true"
-			        android:text="@string/loan_for" />
-			    <TextView android:id="@+id/loan_seek_duration_feed"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_below="@id/loan_for"
-			        android:layout_centerHorizontal="true"
-			        android:textStyle="bold"
-			        android:textSize="24dp" />
-			    </RelativeLayout>"
+		        android:textStyle="italic"
+		        android:typeface="serif"
+		        android:textSize="16dp"
+		        android:text="@string/loan_for" />
 	        <SeekBar android:id="@+id/loan_seek_duration"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_alignParentBottom="true"
 		        android:max="5"
 		        android:progress="0" />
+	        <TextView android:id="@+id/loan_seek_duration_feed"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_above="@id/loan_seek_duration"
+		        android:layout_alignParentLeft="true"
+		        android:textStyle="bold"
+		        android:textSize="24dp" />
 	    </RelativeLayout>
 	</LinearLayout>
 	<LinearLayout

@@ -18,8 +18,9 @@
     <string name="group_row_rate_text_extra"> / $100 / Meeting</string>
     
     <string name="currency_symbol">$</string>
-    <string name="loan_for">for</string>
-    <string name="loan_duration_unit">Sessions</string>
+    <string name="loan_for">&#160;for&#160;</string>
+    <string name="loan_duration_unit">Meetings</string>
+    <string name="available">remaining</string>
     
     <integer-array name="loan_amounts_linear">
         <item>50</item>
@@ -61,5 +62,25 @@
 	</integer-array>
 	
 	<string name="one_loan_at_a_time">A member cannot take multiple loans</string>
+	<string name="need_to_start">
+	    Press the arrow in the top right to start a meeting!
+	</string>
+	<string name="no_members_yet">
+	    You don\'t have any members yet, try adding some.
+	</string>
+	<string name="outstanding_loans">
+	    Loans are due. Pay or extend them.
+	</string>
+	<string name="meeting_advanced">Advancing... Total dues paid:</string>
 
+	<string name="loan_custom_title">Custom Loan</string>
+	<string name="type_amount_here">Type loan amount...</string>
+	<string name="type_duration_here">Type loan duration... (in meetings)</string>
+	
+	<string name="number_format_exception">
+	    The numbers you entered were invalid...
+	</string>
+	<string name="out_of_bounds">
+	    The amount you entered is too large...
+	</string>
 </resources>

@@ -12,10 +12,10 @@
 	    android:padding="15dp"
 	    >
 	    <ImageButton android:id="@+id/add_member_image"
-		    android:layout_width="175dp"
+		    android:layout_width="fill_parent"
 		    android:layout_height="175dp"
 		    android:padding="15dp"
-		    android:scaleType="fitXY"
+		    android:scaleType="fitCenter"
 		    android:src="@drawable/missing_photo" />
 		<EditText android:id="@+id/add_member_name"
 		    android:layout_width="fill_parent"
