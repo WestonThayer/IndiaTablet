@@ -180,7 +180,7 @@ public class TabsActivity extends FragmentActivity {
     	
     	// Simulator Tab
     	tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 2);
-    	((OverviewFragment) getSupportFragmentManager().findFragmentByTag(tag))
+    	((SimulatorFragment) getSupportFragmentManager().findFragmentByTag(tag))
     				.changeAdapterCursor();
 	}
 }

@@ -29,6 +29,7 @@ public class MembersFragment extends Fragment {
 	
 	public static final String GROUP_EXTRA = "group_extra";
 	
+	private MembersDbAdapter membersDb;
 	private MembersAdapter adapter;
 	private long group;
 	
@@ -113,7 +114,7 @@ public class MembersFragment extends Fragment {
 	}
 	
 	public void changeAdapterCursor() {
-		MembersDbAdapter membersDb = new MembersDbAdapter(getActivity());
+		membersDb = new MembersDbAdapter(getActivity());
 		membersDb.open();
 		Cursor c = membersDb.fetchMembers(group);
 		getActivity().startManagingCursor(c);
@@ -124,8 +125,12 @@ public class MembersFragment extends Fragment {
 		else {
 			adapter.changeCursor(c);
 		}
-		
+	}
+	
+	@Override
+	public void onDestroy() {
 		membersDb.close();
+		super.onDestroy();
 	}
 	
 	/*
@@ -271,6 +276,7 @@ public class MembersFragment extends Fragment {
 							
 							// Grab the amount he took out and for how long
 							MembersDbAdapter membersDb = new MembersDbAdapter(getActivity());
+							membersDb.open();
 							Cursor c = membersDb.fetchMember(id);
 							int payment = c.getInt(c.getColumnIndex(MembersDbAdapter.COL_LOAN_AMNT));
 							int duration = c.getInt(c.getColumnIndex(MembersDbAdapter.COL_LOAN_DURATION));

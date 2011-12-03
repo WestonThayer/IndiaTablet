@@ -29,6 +29,7 @@ public class GroupFragment extends Fragment {
 	
 	public static final String GROUP_NAME_EXTRA = "group_name_extra";
 	
+	private GroupsDbAdapter groupsDb;
 	private ListView lv;
 	private SimpleCursorAdapter adapter;
 	
@@ -45,6 +46,27 @@ public class GroupFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.group_fragment, container, false);
 		lv = (ListView) root.findViewById(R.id.group_listview);
+		String[] from = new String[] {
+				GroupsDbAdapter.COL_NAME,
+				GroupsDbAdapter.COL_DUES,
+				GroupsDbAdapter.COL_FEES,
+				GroupsDbAdapter.COL_RATE
+				};
+		int[] to = new int[] {
+				R.id.group_row_name,
+				R.id.group_row_dues,
+				R.id.group_row_fees,
+				R.id.group_row_rate
+				};
+		
+		groupsDb = new GroupsDbAdapter(getActivity());
+		groupsDb.open();
+		Cursor c = groupsDb.fetchGroups();
+		getActivity().startManagingCursor(c);
+		adapter = new SimpleCursorAdapter(getActivity(), R.layout.group_row,
+				c, from, to, 0);
+		
+		lv.setAdapter(adapter);
 		
 		// Click to look at group
 		lv.setOnItemClickListener(new OnItemClickListener() {
@@ -79,33 +101,11 @@ public class GroupFragment extends Fragment {
 	}
 	
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
-		// We have to set the adapter here because the activity is now
-		// managing the database
-		String[] from = new String[] {
-				GroupsDbAdapter.COL_NAME,
-				GroupsDbAdapter.COL_DUES,
-				GroupsDbAdapter.COL_FEES,
-				GroupsDbAdapter.COL_RATE
-				};
-		int[] to = new int[] {
-				R.id.group_row_name,
-				R.id.group_row_dues,
-				R.id.group_row_fees,
-				R.id.group_row_rate
-				};
-		
-		GroupsDbAdapter groupsDb = new GroupsDbAdapter(getActivity());
-		groupsDb.open();
-		Cursor c = groupsDb.fetchGroups();
-		getActivity().startManagingCursor(c);
-		adapter = new SimpleCursorAdapter(getActivity(), R.layout.group_row,
-				c, from, to, 0);
+	public void onDestroy() {
+		// Has to be closed here because the ListView's cursor cannot work
+		// if it is closed.
 		groupsDb.close();
-		
-		lv.setAdapter(adapter);
+		super.onDestroy();
 	}
 	
 	/*

@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 public class SimulatorFragment extends Fragment {
 	
+	private MeetingsDbAdapter meetingsDb;
 	private SimpleCursorAdapter adapter;
 	private long group;
 	
@@ -55,7 +56,7 @@ public class SimulatorFragment extends Fragment {
 				R.id.overview_row_postpot
 				};
 		
-		MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(getActivity());
+		meetingsDb = new MeetingsDbAdapter(getActivity());
 		meetingsDb.open();
 		Cursor c = meetingsDb.fetchMeetings(group);
 		getActivity().startManagingCursor(c);
@@ -67,8 +68,12 @@ public class SimulatorFragment extends Fragment {
 		else {
 			adapter.changeCursor(c);
 		}
-		
+	}
+	
+	@Override
+	public void onDestroy() {
 		meetingsDb.close();
+		super.onDestroy();
 	}
 	
 	/*

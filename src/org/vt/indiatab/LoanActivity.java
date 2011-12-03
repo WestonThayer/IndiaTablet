@@ -194,6 +194,22 @@ public class LoanActivity extends FragmentActivity {
 		});
 	}
 	
+	/*
+	 * Currently, it forgets if you've entered a custom value. Annoying to fix
+	 * because the SeekBars auto update on a rotate and override whatever value
+	 * you recover. Deal with it later.
+	 * TODO: Deal with it.
+	 * 
+	private static final String FINAL_LOAN = "final_loan";
+	private static final String FINAL_DURATION = "final_duration";
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(FINAL_LOAN, finalLoan);
+		outState.putInt(FINAL_DURATION, finalDuration);
+	}*/
+	
 	public void setCustomLoan(int loanAmount, int duration) {		
 		if ((postPot - loanAmount) < 0) {
 			// We can't let them exceed the amount available
@@ -220,7 +236,7 @@ public class LoanActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_CUSTOM, 0, "Custom")
-				.setIcon(R.drawable.edit)
+				.setIcon(R.drawable.edit_white)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS |
 						MenuItem.SHOW_AS_ACTION_WITH_TEXT);
 		
