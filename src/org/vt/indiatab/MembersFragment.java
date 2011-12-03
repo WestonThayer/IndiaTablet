@@ -29,7 +29,6 @@ public class MembersFragment extends Fragment {
 	
 	public static final String GROUP_EXTRA = "group_extra";
 	
-	private Cursor c;
 	private MembersAdapter adapter;
 	private long group;
 	
@@ -47,11 +46,7 @@ public class MembersFragment extends Fragment {
 		View root = inflater.inflate(R.layout.members_fragment, container, false);
 		
 		GridView grid = (GridView) root.findViewById(R.id.members_gridview);
-		
-		c = ((TabsActivity) getActivity()).dbAdapter.fetchMembers(group);
-		getActivity().startManagingCursor(c);
-		adapter = new MembersAdapter(getActivity(), c);
-		
+		changeAdapterCursor();
 		grid.setAdapter(adapter);
 		
 		// Clicking allows for taking out loan, or repaying loan
@@ -63,14 +58,14 @@ public class MembersFragment extends Fragment {
 				// Check to see if anybody is allowed to take out a loan
 				// (has the game begun)
 				
-				MeetingsDbAdapter mdb = new MeetingsDbAdapter(getActivity());
-				mdb.open();
-				if (!mdb.isFirstMeeting(group)) {
+				MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(getActivity());
+				meetingsDb.open();
+				if (!meetingsDb.isFirstMeeting(group)) {
 					// Decide if they can take out a loan or if a loan is due
 					
-					MembersDbAdapter db = new MembersDbAdapter(getActivity());
-					db.open();
-					Cursor c = db.fetchMember(id);
+					MembersDbAdapter membersDb = new MembersDbAdapter(getActivity());
+					membersDb.open();
+					Cursor c = membersDb.fetchMember(id);
 					
 					int durationC = c.getColumnIndex(MembersDbAdapter.COL_LOAN_DURATION);
 					int duration = c.getInt(durationC);
@@ -78,7 +73,7 @@ public class MembersFragment extends Fragment {
 					int progress = c.getInt(progressC);
 					
 					c.close();
-					db.close();
+					membersDb.close();
 					
 					if (duration == -1) {
 						Intent i = new Intent(getActivity(), LoanActivity.class);
@@ -98,7 +93,7 @@ public class MembersFragment extends Fragment {
 					Toast.makeText(getActivity(), R.string.need_to_start,
 							Toast.LENGTH_SHORT).show();
 				}
-				mdb.close();
+				meetingsDb.close();
 			}
 		});
 		
@@ -117,9 +112,20 @@ public class MembersFragment extends Fragment {
 		return root;
 	}
 	
-	public void changeAdapterCursor(MembersDbAdapter db) {
-		adapter.changeCursor(((TabsActivity) getActivity()).dbAdapter
-				.fetchMembers(group));
+	public void changeAdapterCursor() {
+		MembersDbAdapter membersDb = new MembersDbAdapter(getActivity());
+		membersDb.open();
+		Cursor c = membersDb.fetchMembers(group);
+		getActivity().startManagingCursor(c);
+		
+		if (adapter == null) {
+			adapter = new MembersAdapter(getActivity(), c);
+		}
+		else {
+			adapter.changeCursor(c);
+		}
+		
+		membersDb.close();
 	}
 	
 	/*
@@ -162,8 +168,7 @@ public class MembersFragment extends Fragment {
 		switch (requestCode) {
 		case RQ_ADD_MEMBER:
 			if (resultCode == Activity.RESULT_OK) {
-				adapter.changeCursor(((TabsActivity) getActivity())
-						.dbAdapter.fetchMembers(group));
+				changeAdapterCursor();
 			}
 			return;
 		case RQ_LOAN:
@@ -172,13 +177,11 @@ public class MembersFragment extends Fragment {
 				int amount = data.getIntExtra(LoanActivity.MEMBER_LOAN_AMOUNT_EXTRA, -1);
 				//int duration = data.getIntExtra(LoanActivity.MEMBER_LOAN_DURATION_EXTRA, -1);
 				
-				MeetingsDbAdapter mdb = new MeetingsDbAdapter(getActivity());
-				mdb.open();
-				
-				mdb.updateLatestMeeting(group, 0, amount);
-				((TabsActivity) getActivity()).notifyTabs(mdb, null);
-				
-				mdb.close();
+				MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(getActivity());
+				meetingsDb.open();
+				meetingsDb.updateLatestMeeting(group, 0, amount);
+				((TabsActivity) getActivity()).notifyTabs();
+				meetingsDb.close();
 			}
 			return;
 		default:
@@ -220,19 +223,16 @@ public class MembersFragment extends Fragment {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							TabsActivity a = ((TabsActivity) getActivity());
+							MembersDbAdapter membersDb = new MembersDbAdapter(getActivity());
+							membersDb.open();
+							membersDb.deleteMember(id);
+							membersDb.close();
 							
-							a.dbAdapter.deleteMember(id);
-							a.notifyTabs(null, null);
+							MembersFragment f = (MembersFragment) getTargetFragment();
+							f.changeAdapterCursor();
 						}
 					})
-					.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-						
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							dismiss();
-						}
-					})
+					.setNegativeButton("Cancel", null)
 					.create();
 		}
 	}
@@ -268,33 +268,35 @@ public class MembersFragment extends Fragment {
 						
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							TabsActivity a = ((TabsActivity) getActivity());
 							
 							// Grab the amount he took out and for how long
-							Cursor c = a.dbAdapter.fetchMember(id);
+							MembersDbAdapter membersDb = new MembersDbAdapter(getActivity());
+							Cursor c = membersDb.fetchMember(id);
 							int payment = c.getInt(c.getColumnIndex(MembersDbAdapter.COL_LOAN_AMNT));
 							int duration = c.getInt(c.getColumnIndex(MembersDbAdapter.COL_LOAN_DURATION));
 							c.close();
 							
 							// Find out how much interest he pays
 							// Currently, rate is X per $100 per meeting
-							GroupsDbAdapter gdb = new GroupsDbAdapter(getActivity());
-							gdb.open();
-							c = gdb.fetchGroup(group);
+							GroupsDbAdapter groupsDb = new GroupsDbAdapter(getActivity());
+							groupsDb.open();
+							c = groupsDb.fetchGroup(group);
 							double rate = (double) c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_RATE));
 							c.close();
-							gdb.close();
+							groupsDb.close();
 							
 							
 							// Pay the loan using compound interest:
 							// Total = initialAmount * (1 + rate/100)^duration
-							MeetingsDbAdapter mdb = new MeetingsDbAdapter(getActivity());
-							mdb.open();
-							a.dbAdapter.payMemberLoans(id);
+							MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(getActivity());
+							meetingsDb.open();
+							membersDb.payMemberLoans(id);
 							payment = (int) Math.ceil(payment * Math.pow((1 + (rate / 100.0)), duration));
-							mdb.updateLatestMeeting(group, payment, 0);
-							a.notifyTabs(mdb, null);
-							mdb.close();
+							meetingsDb.updateLatestMeeting(group, payment, 0);
+							((TabsActivity) getActivity()).notifyTabs();
+							meetingsDb.close();
+							
+							membersDb.close();
 						}
 					})
 					.setNegativeButton("Extend", null)

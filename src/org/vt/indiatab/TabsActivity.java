@@ -3,7 +3,6 @@ package org.vt.indiatab;
 import org.vt.indiatab.data.GroupsDbAdapter;
 import org.vt.indiatab.data.MeetingsDbAdapter;
 import org.vt.indiatab.data.MembersDbAdapter;
-import org.vt.indiatab.data.SimulatorDbAdapter;
 
 import android.database.Cursor;
 import android.os.Bundle;
@@ -21,8 +20,6 @@ public class TabsActivity extends FragmentActivity {
 
 	private static final String INDEX = "index";
 	
-	public MembersDbAdapter dbAdapter;
-	
 	private ViewPager  mViewPager;
     private TabsAdapter mTabsAdapter;
     private ActionBar actionBar;
@@ -36,9 +33,6 @@ public class TabsActivity extends FragmentActivity {
 		requestWindowFeature(Window.FEATURE_ACTION_BAR_ITEM_TEXT);
 		
 		group = getIntent().getLongExtra(MembersFragment.GROUP_EXTRA, -1);
-		
-		dbAdapter = new MembersDbAdapter(this);
-		dbAdapter.open();
 		
 		actionBar = getSupportActionBar();
 		
@@ -72,12 +66,6 @@ public class TabsActivity extends FragmentActivity {
         outState.putInt(INDEX, getSupportActionBar().getSelectedNavigationIndex());
     }
 	
-	@Override
-	public void onDestroy() {
-		dbAdapter.close();
-		super.onDestroy();
-	}
-	
 	/*
 	 * Handle the up structure home button behavior and add the common actions
 	 */
@@ -104,63 +92,68 @@ public class TabsActivity extends FragmentActivity {
 	            finish();
 	            return true;
 	        case MENU_ADVANCE:
-	        	if (dbAdapter.isMemberLoanDue(group)) {
-	        		// Loans are still out. Make them pay
+	        	MembersDbAdapter membersDb = new MembersDbAdapter(this);
+	        	membersDb.open();
+	        	MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(this);
+	        	meetingsDb.open();
+	        	GroupsDbAdapter groupsDb = new GroupsDbAdapter(this);
+	        	groupsDb.open();
+	        	Cursor c;
+	        	
+	        	// Check if this is even allowed
+	        	if (membersDb.isMemberLoanDue(group)) {
+	        		membersDb.close();
+	        		
 	        		Toast.makeText(this, R.string.outstanding_loans,
 	        				Toast.LENGTH_SHORT).show();
 	        		actionBar.selectTab(tab1);
-	        		
-	        		return true;
-	        	}
-	        	
-	        	MeetingsDbAdapter mdb = new MeetingsDbAdapter(this);
-	        	mdb.open();
-	        	
-	        	// (Last meetings POST_POT) + (#Members * Dues) - Fees
-	        	
-	        	GroupsDbAdapter gdb = new GroupsDbAdapter(this);
-	        	gdb.open();
-	        	Cursor c = gdb.fetchGroup(group);
-	        	int dues = c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_DUES));
-	        	int fees = c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_FEES));
-	        	c.close();
-	        	gdb.close();
-	        	
-	        	int numMembers = dbAdapter.getMemberCount(group);
-	        	
-	        	if (numMembers != 0) {
-	        		// Create the next meeting
-		        	if (mdb.isFirstMeeting(group)) {
-		        		mdb.createMeeting(1, group, (numMembers * dues) - fees);
-		        	}
-		        	else {
-		        		c = mdb.getLatestMeeting(group);
-		        		int postPotC = c.getColumnIndex(MeetingsDbAdapter.COL_POST_POT);
-		        		int postPot = c.getInt(postPotC);
-		        		
-		        		mdb.createMeeting(mdb.getNextMeetingNumber(c), group,
-		        				postPot + (numMembers * dues) - fees);
-		        		
-		        		c.close();
-		        	}
-		        	// Move all members with loans out forward
-		        	dbAdapter.advanceMemberLoans(group);
-		        	
-		        	notifyTabs(mdb, null);
-		        	
-		        	// Inform the user that we've moved on
-		        	String currency = getResources().getString(R.string.currency_symbol);
-		        	String intro = getResources().getString(R.string.meeting_advanced);
-		        	
-		        	Toast.makeText(this, intro + " " + currency +
-		        			(numMembers * dues), Toast.LENGTH_SHORT).show();
 	        	}
 	        	else {
-	        		Toast.makeText(this, R.string.no_members_yet,
-	        				Toast.LENGTH_SHORT).show();
+		        	// (Last meetings POST_POT) + (#Members * Dues) - Fees
+		        	
+		        	c = groupsDb.fetchGroup(group);
+		        	int dues = c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_DUES));
+		        	int fees = c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_FEES));
+		        	c.close();
+		        	
+		        	int numMembers = membersDb.getMemberCount(group);
+		        	
+		        	if (numMembers != 0) {
+		        		// Create the next meeting
+			        	if (meetingsDb.isFirstMeeting(group)) {
+			        		meetingsDb.createMeeting(1, group, (numMembers * dues) - fees);
+			        	}
+			        	else {
+			        		c = meetingsDb.getLatestMeeting(group);
+			        		int postPotC = c.getColumnIndex(MeetingsDbAdapter.COL_POST_POT);
+			        		int postPot = c.getInt(postPotC);
+			        		
+			        		meetingsDb.createMeeting(meetingsDb.getNextMeetingNumber(c), group,
+			        				postPot + (numMembers * dues) - fees);
+			        		
+			        		c.close();
+			        	}
+			        	// Move all members with loans out forward
+			        	membersDb.advanceMemberLoans(group);
+			        	
+			        	notifyTabs();
+			        	
+			        	// Inform the user that we've moved on
+			        	String currency = getResources().getString(R.string.currency_symbol);
+			        	String intro = getResources().getString(R.string.meeting_advanced);
+			        	
+			        	Toast.makeText(this, intro + " " + currency +
+			        			(numMembers * dues), Toast.LENGTH_SHORT).show();
+		        	}
+		        	else {
+		        		Toast.makeText(this, R.string.no_members_yet,
+		        				Toast.LENGTH_SHORT).show();
+		        	}
 	        	}
 	        	
-	        	mdb.close();
+	        	membersDb.close();
+	        	meetingsDb.close();
+	        	groupsDb.close();
 	        	
 	        	return true;
 	        default:
@@ -168,7 +161,7 @@ public class TabsActivity extends FragmentActivity {
 	    }
 	}
 	
-	public void notifyTabs(MeetingsDbAdapter mdb, SimulatorDbAdapter sdb) {
+	public void notifyTabs() {
 		/*
     	 * This was no fun at all. The Fragment's tag is auto generated
     	 * by ActionBarSherlock's FragmentPagerAdapter using the
@@ -178,16 +171,16 @@ public class TabsActivity extends FragmentActivity {
 		// Members Tab
 		String tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 0);
     	((MembersFragment) getSupportFragmentManager().findFragmentByTag(tag))
-    				.changeAdapterCursor(null);
+    				.changeAdapterCursor();
 		
     	// Overview Tab
     	tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 1);
     	((OverviewFragment) getSupportFragmentManager().findFragmentByTag(tag))
-    				.changeAdapterCursor(mdb);
+    				.changeAdapterCursor();
     	
     	// Simulator Tab
     	tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 2);
     	((OverviewFragment) getSupportFragmentManager().findFragmentByTag(tag))
-    				.changeAdapterCursor(mdb);
+    				.changeAdapterCursor();
 	}
 }

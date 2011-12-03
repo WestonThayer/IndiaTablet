@@ -76,10 +76,10 @@ public class AddMemberActivity extends FragmentActivity {
 				long group = getIntent().getLongExtra(MembersFragment.GROUP_EXTRA, -1);
 				
 				if (group != -1) {
-					MembersDbAdapter dbAdapter = new MembersDbAdapter(AddMemberActivity.this);
-					dbAdapter.open();
-					dbAdapter.createMember(n, group, notes.getText().toString(), pic);
-					dbAdapter.close();
+					MembersDbAdapter membersDb = new MembersDbAdapter(AddMemberActivity.this);
+					membersDb.open();
+					membersDb.createMember(n, group, notes.getText().toString(), pic);
+					membersDb.close();
 					
 					setResult(RESULT_OK);
 				}

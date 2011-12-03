@@ -55,11 +55,11 @@ public class LoanActivity extends FragmentActivity {
 		// Grab the member's ID and get the name and pic
 		String name = "";
 		byte[] b = null;
-		MembersDbAdapter db = new MembersDbAdapter(this);
-		db.open();
+		MembersDbAdapter membersDb = new MembersDbAdapter(this);
+		membersDb.open();
 		memberId = getIntent().getLongExtra(MEMBER_ID_EXTRA, -1);
 		if (memberId != -1) {
-			Cursor c = db.fetchMember(memberId);
+			Cursor c = membersDb.fetchMember(memberId);
 			int nameC = c.getColumnIndex(MembersDbAdapter.COL_NAME);
 			int picC = c.getColumnIndex(MembersDbAdapter.COL_PIC);
 			
@@ -68,17 +68,16 @@ public class LoanActivity extends FragmentActivity {
 			
 			c.close();
 		}
-		db.close();
+		membersDb.close();
 		
 		// Grab the group ID, the find out how much is in the pot
 		group = getIntent().getLongExtra(GROUP_ID_EXTRA, -1);
-		MeetingsDbAdapter mdb = new MeetingsDbAdapter(this);
-		mdb.open();
-		Cursor c = mdb.getLatestMeeting(group);
-		System.out.println("plase " + c.getCount() + " group: " + group);
+		MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(this);
+		meetingsDb.open();
+		Cursor c = meetingsDb.getLatestMeeting(group);
 		postPot = c.getInt(c.getColumnIndex(MeetingsDbAdapter.COL_POST_POT));
 		c.close();
-		mdb.close();
+		meetingsDb.close();
 		
 		// Action Bar setup
 		ActionBar actionBar = getSupportActionBar();
@@ -170,10 +169,10 @@ public class LoanActivity extends FragmentActivity {
 
 			@Override
 			public void onClick(View v) {
-				MembersDbAdapter db = new MembersDbAdapter(LoanActivity.this);
-				db.open();
-				db.giveLoanToMember(memberId, finalLoan, "reason", finalDuration);
-				db.close();
+				MembersDbAdapter membersDb = new MembersDbAdapter(LoanActivity.this);
+				membersDb.open();
+				membersDb.giveLoanToMember(memberId, finalLoan, "reason", finalDuration);
+				membersDb.close();
 				
 				Intent i = new Intent();
 				i.putExtra(MEMBER_ID_EXTRA, memberId);
