@@ -27,6 +27,9 @@ public class OverviewFragment extends Fragment {
 		setHasOptionsMenu(true);
 		
 		group = getArguments().getLong(MembersFragment.GROUP_EXTRA);
+		
+		meetingsDb = new MeetingsDbAdapter(getActivity());
+		meetingsDb.open();
 	}
 	
 	@Override
@@ -56,9 +59,6 @@ public class OverviewFragment extends Fragment {
 				R.id.overview_row_out,
 				R.id.overview_row_postpot
 				};
-		
-		meetingsDb = new MeetingsDbAdapter(getActivity());
-		meetingsDb.open();
 		Cursor c = meetingsDb.fetchMeetings(group);
 		getActivity().startManagingCursor(c);
 		

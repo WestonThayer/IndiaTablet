@@ -39,6 +39,9 @@ public class MembersFragment extends Fragment {
 		setHasOptionsMenu(true);
 		
 		group = getArguments().getLong(GROUP_EXTRA);
+		
+		membersDb = new MembersDbAdapter(getActivity());
+		membersDb.open();
 	}
 	
 	@Override
@@ -114,8 +117,6 @@ public class MembersFragment extends Fragment {
 	}
 	
 	public void changeAdapterCursor() {
-		membersDb = new MembersDbAdapter(getActivity());
-		membersDb.open();
 		Cursor c = membersDb.fetchMembers(group);
 		getActivity().startManagingCursor(c);
 		
