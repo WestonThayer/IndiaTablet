@@ -19,8 +19,8 @@ public class DbHelper extends SQLiteOpenHelper {
 			MembersDbAdapter.COL_LOAN_AMNT + " integer, " +
 			MembersDbAdapter.COL_LOAN_REASON + " text, " + //update this later
 			MembersDbAdapter.COL_LOAN_PROG + " integer, " +
-			MembersDbAdapter.COL_LOAN_DURATION + " integer " +
-			MembersDbAdapter.COL_LOAN_AMNT_SIM + " integer " +
+			MembersDbAdapter.COL_LOAN_DURATION + " integer, " +
+			MembersDbAdapter.COL_LOAN_AMNT_SIM + " integer, " +
 			MembersDbAdapter.COL_LOAN_DURATION_SIM + " integer);";
 	
 	private static final String DB_CREATE_2 = "create table " +
@@ -39,7 +39,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			MeetingsDbAdapter.COL_INIT_POT + " integer, " +
 			MeetingsDbAdapter.COL_LOANS_IN + " integer, " +
 			MeetingsDbAdapter.COL_LOANS_OUT + " integer, " +
-			MeetingsDbAdapter.COL_POST_POT + " integer " +
+			MeetingsDbAdapter.COL_POST_POT + " integer, " +
 			MeetingsDbAdapter.COL_INIT_POT_SIM + " integer, " +
 			MeetingsDbAdapter.COL_LOANS_IN_SIM + " integer, " +
 			MeetingsDbAdapter.COL_LOANS_OUT_SIM + " integer, " +

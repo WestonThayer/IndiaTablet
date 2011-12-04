@@ -59,6 +59,10 @@ public class MembersDbAdapter {
 		values.put(COL_LOAN_PROG, 0);
 		values.put(COL_LOAN_DURATION, NO_LOAN);
 		
+		// Not even a fake one
+		values.put(COL_LOAN_AMNT_SIM, 0);
+		values.put(COL_LOAN_DURATION_SIM, NO_LOAN);
+		
 		return db.insert(TABLE_NAME, null, values);
 	}
 	
@@ -107,9 +111,11 @@ public class MembersDbAdapter {
 			}
 			while (c.moveToNext());
 			
+			c.close();
 			return true;
 		}
 		
+		c.close();
 		return false;
 	}
 	
@@ -118,7 +124,7 @@ public class MembersDbAdapter {
 		values.put(COL_LOAN_AMNT, 0);
 		values.put(COL_LOAN_REASON, "reason");
 		values.put(COL_LOAN_PROG, 0);
-		values.put(COL_LOAN_DURATION, -1);
+		values.put(COL_LOAN_DURATION, NO_LOAN);
 		
 		return db.update(TABLE_NAME, values, COL_GROUP + "=" + group, null) > 0;
 	}
@@ -128,7 +134,7 @@ public class MembersDbAdapter {
 		values.put(COL_LOAN_AMNT, 0);
 		values.put(COL_LOAN_REASON, "reason");
 		values.put(COL_LOAN_PROG, 0);
-		values.put(COL_LOAN_DURATION, -1);
+		values.put(COL_LOAN_DURATION, NO_LOAN);
 		
 		return db.update(TABLE_NAME, values, COL_ID + "=" + id, null) > 0;
 	}
@@ -173,7 +179,8 @@ public class MembersDbAdapter {
 				COL_LOAN_DURATION,
 				COL_PIC
 				},
-				COL_GROUP + "=" + group, null, null, null, null, null);
+				COL_GROUP + "=" + group,
+				null, null, null, null, null);
 		if (c != null) {
 			c.moveToFirst();
 		}
@@ -191,9 +198,9 @@ public class MembersDbAdapter {
 				COL_LOAN_DURATION,
 				COL_PIC
 				},
-				COL_GROUP + "=" + group, null, null,
-				COL_LOAN_DURATION + "<>" + NO_LOAN,
-				null, null);
+				COL_GROUP + "=" + group +
+				" AND " + COL_LOAN_DURATION + "<>" + NO_LOAN,
+				null, null, null, null, null);
 		if (c != null) {
 			c.moveToFirst();
 		}
@@ -201,12 +208,12 @@ public class MembersDbAdapter {
 		return c;
 	}
 	
-	
-	
 	public int getMemberCount(long group) {
 		Cursor c = fetchMembers(group);
+		int count = c.getCount();
+		c.close();
 		
-		return c.getCount();
+		return count;
 	}
 	
 	public boolean isMemberLoanDue(long group) {
@@ -214,12 +221,115 @@ public class MembersDbAdapter {
 				COL_LOAN_PROG,
 				COL_LOAN_DURATION
 				},
-				COL_GROUP + "=" + group + " AND " + COL_LOAN_PROG + "=" + COL_LOAN_DURATION,
+				COL_GROUP + "=" + group +
+				" AND " + COL_LOAN_PROG + "=" + COL_LOAN_DURATION +
+				" AND " + COL_LOAN_DURATION + "<>" + NO_LOAN,
 				null, null, null, null, null);
+		boolean due = (c.getCount() > 0);
+		c.close();
+		
+		return due;
+	}
+	
+	/*
+	 * Simulation specifics
+	 */
+	
+	/**
+	 * Request a member who has no loans out.
+	 * 
+	 * @param group		The group
+	 * @return			Returns 1 or no members
+	 */
+	public Cursor fetchFreeMember(long group) {
+		Cursor c = db.query(TABLE_NAME, new String[] {
+				COL_ID,
+				COL_LOAN_AMNT_SIM,
+				COL_LOAN_DURATION_SIM
+		},
+		COL_GROUP + "=" + group +
+		" AND " + COL_LOAN_DURATION + "=" + NO_LOAN,
+		null, null, null, null,
+		"1");
 		if (c != null) {
 			c.moveToFirst();
 		}
 		
-		return c.getCount() > 0;
+		return c;
+	}
+	
+	/**
+	 * Attempt to find a member with no loans out and give them some amount.
+	 * 
+	 * @param group		The group
+	 * @param amount	The amount to give them
+	 * @return			True if the loan was given, false if else
+	 */
+	public boolean giveSimLoanToFreeMember(long group, int amount) {
+		Cursor c = fetchFreeMember(group);
+		if (c.getCount() == 0) {
+			c.close();
+			return false;
+		}
+		long id = c.getLong(c.getColumnIndex(COL_ID));
+		c.close();
+		
+		ContentValues values = new ContentValues();
+		values.put(COL_LOAN_AMNT_SIM, amount);
+		values.put(COL_LOAN_DURATION_SIM, 1);
+		
+		db.update(TABLE_NAME, values, COL_ID + "=" + id, null);
+		
+		return true;
+	}
+	
+	/**
+	 * Grab the member who has the previous meeting's simulated loan.
+	 * 
+	 * @param group		The group
+	 * @return			One member if there are any
+	 */
+	public Cursor fetchSimOutstandingMember(long group) {
+		Cursor c = db.query(TABLE_NAME, new String[] {
+				COL_ID,
+				COL_LOAN_AMNT_SIM,
+				COL_LOAN_DURATION_SIM
+		},
+		COL_GROUP + "=" + group +
+		" AND " + COL_LOAN_DURATION_SIM + "<>" + NO_LOAN,
+		null, null, null, null,
+		"1");
+		if (c != null) {
+			c.moveToFirst();
+		}
+		
+		return c;
+	}
+	
+	/**
+	 * Attempts to pay a simulated loan back into the pot.
+	 * 
+	 * @param group		The group
+	 * @return			Returns and array with the amount first, duration
+	 * 					second, or null if there isn't a member to pay
+	 */
+	public int[] paySimMemberLoan(long group) {
+		Cursor c = fetchSimOutstandingMember(group);
+		if (c.getCount() == 0) {
+			c.close();
+			return null;
+		}
+		long id = c.getLong(c.getColumnIndex(COL_ID));
+		int amount = c.getInt(c.getColumnIndex(COL_LOAN_AMNT_SIM));
+		int duration = c.getInt(c.getColumnIndex(COL_LOAN_DURATION_SIM));
+		c.close();
+		
+		ContentValues values = new ContentValues();
+		values.put(COL_LOAN_AMNT_SIM, 0);
+		values.put(COL_LOAN_DURATION_SIM, NO_LOAN);
+		
+		db.update(TABLE_NAME, values, COL_ID + "=" + id, null);
+		
+		return new int[] {amount, duration};
 	}
 }

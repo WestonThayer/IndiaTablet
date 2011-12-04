@@ -46,10 +46,10 @@ public class SimulatorFragment extends Fragment {
 	public void changeAdapterCursor() {
 		String[] from = new String[] {
 				MeetingsDbAdapter.COL_MEETING_NUM,
-				MeetingsDbAdapter.COL_INIT_POT,
-				MeetingsDbAdapter.COL_LOANS_IN,
-				MeetingsDbAdapter.COL_LOANS_OUT,
-				MeetingsDbAdapter.COL_POST_POT
+				MeetingsDbAdapter.COL_INIT_POT_SIM,
+				MeetingsDbAdapter.COL_LOANS_IN_SIM,
+				MeetingsDbAdapter.COL_LOANS_OUT_SIM,
+				MeetingsDbAdapter.COL_POST_POT_SIM
 				};
 		int[] to = new int[] {
 				R.id.overview_row_meeting,
@@ -59,7 +59,7 @@ public class SimulatorFragment extends Fragment {
 				R.id.overview_row_postpot
 				};
 		
-		Cursor c = meetingsDb.fetchMeetings(group);
+		Cursor c = meetingsDb.fetchSimMeetings(group);
 		getActivity().startManagingCursor(c);
 		
 		if (adapter == null) {
@@ -94,6 +94,7 @@ public class SimulatorFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case TabsActivity.MENU_DELETE_SIMULATIONS:
+			OverviewFragment.showDeleteMeetingsDialog(this, group);
 			
 			return true;
 		default:

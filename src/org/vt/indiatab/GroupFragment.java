@@ -39,11 +39,14 @@ public class GroupFragment extends Fragment {
 		
 		// Declare that this Fragment can add to the ActionBar and Menu
 		setHasOptionsMenu(true);
+		
+		groupsDb = new GroupsDbAdapter(getActivity());
+		groupsDb.open();
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+			Bundle savedInstanceState) {System.out.println("creatingview");
 		View root = inflater.inflate(R.layout.group_fragment, container, false);
 		lv = (ListView) root.findViewById(R.id.group_listview);
 		String[] from = new String[] {
@@ -59,8 +62,6 @@ public class GroupFragment extends Fragment {
 				R.id.group_row_rate
 				};
 		
-		groupsDb = new GroupsDbAdapter(getActivity());
-		groupsDb.open();
 		Cursor c = groupsDb.fetchGroups();
 		getActivity().startManagingCursor(c);
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.group_row,
@@ -200,18 +201,15 @@ public class GroupFragment extends Fragment {
 					try {
 						GroupFragment f = (GroupFragment) getTargetFragment();
 						
-						GroupsDbAdapter groupsDb = new GroupsDbAdapter(getActivity());
-						groupsDb.open();
-						groupsDb.createGroup(
+						f.groupsDb.createGroup(
 								name.getText().toString(),
 								Integer.parseInt(dues.getText().toString()),
 								Integer.parseInt(fees.getText().toString()),
 								Integer.parseInt(rate.getText().toString())
 								);
-						Cursor c = groupsDb.fetchGroups();
+						Cursor c = f.groupsDb.fetchGroups();
 						getActivity().startManagingCursor(c);
 						f.adapter.changeCursor(c);
-						groupsDb.close();
 					}
 					catch (NumberFormatException e) {
 						Toast.makeText(getActivity(),
@@ -266,13 +264,10 @@ public class GroupFragment extends Fragment {
 						public void onClick(DialogInterface dialog, int which) {
 							GroupFragment f = (GroupFragment) getTargetFragment();
 							
-							GroupsDbAdapter groupsDb = new GroupsDbAdapter(getActivity());
-							groupsDb.open();
-							groupsDb.deleteGroup(id);
-							Cursor c = groupsDb.fetchGroups();
+							f.groupsDb.deleteGroup(id);
+							Cursor c = f.groupsDb.fetchGroups();
 							getActivity().startManagingCursor(c);
 							f.adapter.changeCursor(c);
-							groupsDb.close();
 						}
 					})
 					.setNegativeButton("Cancel", null)

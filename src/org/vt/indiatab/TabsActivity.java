@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.ActionBar.Tab;
 import android.support.v4.view.Menu;
@@ -117,22 +118,42 @@ public class TabsActivity extends FragmentActivity {
 		        	c.close();
 		        	
 		        	int numMembers = membersDb.getMemberCount(group);
+		        	int initPot = (numMembers * dues) - fees;
 		        	
-		        	if (numMembers != 0) {
+		        	if (numMembers != 0) {		        		
 		        		// Create the next meeting
 			        	if (meetingsDb.isFirstMeeting(group)) {
-			        		meetingsDb.createMeeting(1, group, (numMembers * dues) - fees);
+			        		meetingsDb.createMeeting(1, group, initPot, initPot);
 			        	}
 			        	else {
 			        		c = meetingsDb.getLatestMeeting(group);
-			        		int postPotC = c.getColumnIndex(MeetingsDbAdapter.COL_POST_POT);
-			        		int postPot = c.getInt(postPotC);
-			        		
-			        		meetingsDb.createMeeting(meetingsDb.getNextMeetingNumber(c), group,
-			        				postPot + (numMembers * dues) - fees);
-			        		
+			        		int postPot = c.getInt(c.getColumnIndex(
+			        				MeetingsDbAdapter.COL_POST_POT));
+			        		int postPotSim = c.getInt(c.getColumnIndex(
+			        				MeetingsDbAdapter.COL_POST_POT_SIM));
+			        		int nextMeeting = meetingsDb.getNextMeetingNumber(c);
 			        		c.close();
+			        		
+			        		// Give loans after the first meeting
+			        		membersDb.giveSimLoanToFreeMember(group, postPotSim);
+			        		meetingsDb.updateLatestSimMeeting(group, 0, postPotSim);
+			        		
+			        		meetingsDb.createMeeting(nextMeeting, group,
+			        				postPot + initPot, initPot);
+			        		
+			        		// Pay back the loan
+			        		int[] ret = membersDb.paySimMemberLoan(group);
+			        		if (ret != null) {
+				        		int simAmnt = ret[0];
+				        		int simDur = ret[1];
+				        		c = groupsDb.fetchGroup(group);
+								double rate = (double) c.getInt(c.getColumnIndex(GroupsDbAdapter.COL_RATE));
+								c.close();
+								simAmnt = (int) Math.ceil(simAmnt * Math.pow((1 + (rate / 100.0)), simDur));
+								meetingsDb.updateLatestSimMeeting(group, simAmnt, 0);
+			        		}
 			        	}
+			        	
 			        	// Move all members with loans out forward
 			        	membersDb.advanceMemberLoans(group);
 			        	
@@ -167,20 +188,27 @@ public class TabsActivity extends FragmentActivity {
     	 * by ActionBarSherlock's FragmentPagerAdapter using the
     	 * actual ViewPager's id and the tab's position. Terrible.
     	 */
+		FragmentManager fm = getSupportFragmentManager();
 		
 		// Members Tab
 		String tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 0);
-    	((MembersFragment) getSupportFragmentManager().findFragmentByTag(tag))
-    				.changeAdapterCursor();
+		MembersFragment mf = (MembersFragment) fm.findFragmentByTag(tag);
+    	if (mf != null) {
+    		mf.changeAdapterCursor();
+    	}
 		
     	// Overview Tab
     	tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 1);
-    	((OverviewFragment) getSupportFragmentManager().findFragmentByTag(tag))
-    				.changeAdapterCursor();
+    	OverviewFragment of = (OverviewFragment) fm.findFragmentByTag(tag);
+    	if (of != null) {
+    		of.changeAdapterCursor();
+    	}
     	
     	// Simulator Tab
     	tag = FragmentPagerAdapter.makeFragmentName(mViewPager.getId(), 2);
-    	((SimulatorFragment) getSupportFragmentManager().findFragmentByTag(tag))
-    				.changeAdapterCursor();
+    	SimulatorFragment sf = (SimulatorFragment) fm.findFragmentByTag(tag);
+    	if (sf != null) {
+    		sf.changeAdapterCursor();
+    	}
 	}
 }

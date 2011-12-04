@@ -83,4 +83,11 @@
 	<string name="out_of_bounds">
 	    The amount you entered is too large...
 	</string>
+	
+	<!-- Delete meetings dialog -->
+	<string name="delete_meetings_title">Delete All Meetings?</string>
+	<string name="delete_meetings_message">
+	    Are you sure you want to delete every meeting? You cannot undo this
+	    action. All records of past meetings will be deleted for this group.
+	</string>
 </resources>

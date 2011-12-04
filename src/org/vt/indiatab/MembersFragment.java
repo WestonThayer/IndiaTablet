@@ -79,7 +79,7 @@ public class MembersFragment extends Fragment {
 					c.close();
 					membersDb.close();
 					
-					if (duration == -1) {
+					if (duration == MembersDbAdapter.NO_LOAN) {
 						Intent i = new Intent(getActivity(), LoanActivity.class);
 						i.putExtra(LoanActivity.MEMBER_ID_EXTRA, id);
 						i.putExtra(LoanActivity.GROUP_ID_EXTRA, group);

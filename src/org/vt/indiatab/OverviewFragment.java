@@ -3,8 +3,12 @@ package org.vt.indiatab;
 import org.vt.indiatab.data.MeetingsDbAdapter;
 import org.vt.indiatab.data.MembersDbAdapter;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
@@ -94,21 +98,62 @@ public class OverviewFragment extends Fragment {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case TabsActivity.MENU_DELETE_MEETINGS:
-			MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(getActivity());
-			meetingsDb.open();
-			meetingsDb.deleteMeetings(group);
-			meetingsDb.close();
-			
-			MembersDbAdapter membersDb = new MembersDbAdapter(getActivity());
-			membersDb.open();
-			membersDb.absolveMemberLoans(group);
-			membersDb.close();
-			
-			((TabsActivity) getActivity()).notifyTabs();
+			showDeleteMeetingsDialog(this, group);
 			
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	public static void showDeleteMeetingsDialog(Fragment f, long group) {
+		DeleteMeetingsDialog d = DeleteMeetingsDialog.newInstance();
+		Bundle args = new Bundle();
+		args.putLong("group", group);
+		d.setArguments(args);
+		
+		d.setCancelable(true);
+		d.setTargetFragment(f, 0);
+		d.show(f.getFragmentManager(), "del_meetings");
+	}
+	
+	public static class DeleteMeetingsDialog extends DialogFragment {
+		
+		static DeleteMeetingsDialog newInstance() {
+			DeleteMeetingsDialog d = new DeleteMeetingsDialog();
+			return d;
+		}
+
+		@Override
+		public Dialog onCreateDialog(Bundle savedInstanceState) {
+			final long group = getArguments().getLong("group");
+			
+			return new AlertDialog.Builder(getActivity())
+					.setIcon(android.R.drawable.ic_dialog_alert)
+					.setTitle(R.string.delete_meetings_title)
+					.setMessage(R.string.delete_meetings_message)
+					.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+						
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							Fragment f = getTargetFragment();
+							TabsActivity a = (TabsActivity) f.getActivity();
+							
+							MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(a);
+							meetingsDb.open();
+							meetingsDb.deleteMeetings(group);
+							meetingsDb.close();
+							
+							MembersDbAdapter membersDb = new MembersDbAdapter(a);
+							membersDb.open();
+							membersDb.absolveMemberLoans(group);
+							membersDb.close();
+							
+							a.notifyTabs();
+						}
+					})
+					.setNegativeButton("Cancel", null)
+					.create();
 		}
 	}
 }
