@@ -19,6 +19,12 @@ public class MembersDbAdapter {
 	public static final String COL_LOAN_PROG = "loan_progress";
 	public static final String COL_LOAN_DURATION = "loan_duration";
 	
+	// Simulation columns
+	public static final String COL_LOAN_AMNT_SIM = "loan_amount_sim";
+	public static final String COL_LOAN_DURATION_SIM = "loan_duration_sim";
+	
+	public static final int NO_LOAN = 0;
+	
 	private Context ctx;
 	private SQLiteDatabase db;
 	private DbHelper helper;
@@ -51,7 +57,7 @@ public class MembersDbAdapter {
 		values.put(COL_LOAN_AMNT, 0);
 		values.put(COL_LOAN_REASON, "reason");
 		values.put(COL_LOAN_PROG, 0);
-		values.put(COL_LOAN_DURATION, -1);
+		values.put(COL_LOAN_DURATION, NO_LOAN);
 		
 		return db.insert(TABLE_NAME, null, values);
 	}
@@ -185,13 +191,17 @@ public class MembersDbAdapter {
 				COL_LOAN_DURATION,
 				COL_PIC
 				},
-				COL_GROUP + "=" + group, null, null, null, null, null);
+				COL_GROUP + "=" + group, null, null,
+				COL_LOAN_DURATION + "<>" + NO_LOAN,
+				null, null);
 		if (c != null) {
 			c.moveToFirst();
 		}
 		
 		return c;
 	}
+	
+	
 	
 	public int getMemberCount(long group) {
 		Cursor c = fetchMembers(group);

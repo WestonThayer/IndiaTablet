@@ -35,7 +35,7 @@ public class MembersAdapter extends CursorAdapter {
 		// update the progress
 		int prog = cursor.getInt(cursor.getColumnIndex(MembersDbAdapter.COL_LOAN_PROG));
 		int duration = cursor.getInt(cursor.getColumnIndex(MembersDbAdapter.COL_LOAN_DURATION));
-		if (duration != -1) { // they DO have a loan out
+		if (duration != MembersDbAdapter.NO_LOAN) {
 			holder.progress.setVisibility(View.VISIBLE);
 			holder.progress.setMax(duration);
 			holder.progress.setProgress(prog);

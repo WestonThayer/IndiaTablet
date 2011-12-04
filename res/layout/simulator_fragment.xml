@@ -9,6 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@color/simulator_header"
         >
         <TextView style="@style/overview_first_row_text"
             android:text="Meeting" />

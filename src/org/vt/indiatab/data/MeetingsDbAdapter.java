@@ -12,10 +12,18 @@ public class MeetingsDbAdapter {
 	public static final String COL_ID = "_id";
 	public static final String COL_MEETING_NUM = "meeting_num";
 	public static final String COL_GROUP = "group_id";
+	
+	// Real columns
 	public static final String COL_INIT_POT = "init_pot";
 	public static final String COL_LOANS_IN = "loans_in";
 	public static final String COL_LOANS_OUT = "loans_out";
 	public static final String COL_POST_POT = "post_pot";
+	
+	// Simulation columns
+	public static final String COL_INIT_POT_SIM = "init_pot_sim";
+	public static final String COL_LOANS_IN_SIM = "loans_in_sim";
+	public static final String COL_LOANS_OUT_SIM = "loans_out_sim";
+	public static final String COL_POST_POT_SIM = "post_pot_sim";
 	
 	private Context ctx;
 	private SQLiteDatabase db;

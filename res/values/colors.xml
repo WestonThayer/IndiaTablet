@@ -5,4 +5,5 @@
     <color name="loan_due">#80ff0000</color>
     
     <color name="overview_header">#555</color>
+    <color name="simulator_header">#353</color>
 </resources>
