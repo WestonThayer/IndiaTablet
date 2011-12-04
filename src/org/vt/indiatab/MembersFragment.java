@@ -117,6 +117,9 @@ public class MembersFragment extends Fragment {
 	}
 	
 	public void changeAdapterCursor() {
+		if (adapter != null) {
+			getActivity().stopManagingCursor(adapter.getCursor());
+		}
 		Cursor c = membersDb.fetchMembers(group);
 		getActivity().startManagingCursor(c);
 		

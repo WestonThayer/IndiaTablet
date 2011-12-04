@@ -49,6 +49,10 @@ public class OverviewFragment extends Fragment {
 	}
 	
 	public void changeAdapterCursor() {
+		if (adapter != null) {
+			getActivity().stopManagingCursor(adapter.getCursor());
+		}
+		
 		String[] from = new String[] {
 				MeetingsDbAdapter.COL_MEETING_NUM,
 				MeetingsDbAdapter.COL_INIT_POT,

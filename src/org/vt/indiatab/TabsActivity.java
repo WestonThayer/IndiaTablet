@@ -14,7 +14,6 @@ import android.support.v4.app.ActionBar.Tab;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.Window;
 import android.widget.Toast;
 
 public class TabsActivity extends FragmentActivity {
@@ -31,7 +30,6 @@ public class TabsActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.tabs);
-		requestWindowFeature(Window.FEATURE_ACTION_BAR_ITEM_TEXT);
 		
 		group = getIntent().getLongExtra(MembersFragment.GROUP_EXTRA, -1);
 		

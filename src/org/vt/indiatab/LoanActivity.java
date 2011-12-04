@@ -16,7 +16,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.Menu;
 import android.support.v4.view.MenuItem;
-import android.support.v4.view.Window;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -47,7 +46,6 @@ public class LoanActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.loan);
-		requestWindowFeature(Window.FEATURE_ACTION_BAR_ITEM_TEXT);
 		
 		// We're canceled unless the user clicks OK
 		setResult(RESULT_CANCELED);
