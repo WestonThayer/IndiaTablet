@@ -8,7 +8,30 @@ This is an Android application that targets the Aakash tablet:
 * http://aakashtablet.org/
 
 It uses Jake Wharton's [ActionBarSherlock][1] to bring an intuitive ICS style
-interface down to the Froyo level.
+interface down to the Froyo level. You can read more about the app's purpose
+on [my website][4] and [here][5].
+
+![Example Image][3]
+
+Design
+======
+
+The main UI and control logic can be found in the main org.vt.indiatab package.
+No SharedPreferences of any kind are kept - there isn't any need as of yet. All
+data is in an [SQLiteDatabase][6]. Everything SQLite is in the org.vt.indiatab.data
+package. There is one database and 3 tables:
+
+* `groups`: Has 5 columns
+	* `_id`: Unique row id
+	* `name`: The name given to the group
+	* `dues`: Amount due from each member each meeting
+	* `fees`: Amount charged by the accountant each meeting
+	* `rate`: The compound interest rate, expressed as $X / $100 / Meeting
+* `meetings`: Has columns for each real and simluated meeting
+* `members`: Has columns for member info as well as existing loans they may have
+
+The current implementation allows for data collection. I imagine that much more
+can be done on the visualization side.
 
 Developed By
 ============
@@ -39,3 +62,7 @@ License
 
  [1]: https://github.com/JakeWharton/ActionBarSherlock
  [2]: http://westonthayer.com
+ [3]: http://westonthayer.com/images/india/screen.png
+ [4]: http://westonthayer.com/projects/india/
+ [5]: http://www.id4learning.com/bahikhaata.html
+ [6]: http://developer.android.com/reference/android/database/sqlite/SQLiteDatabase.html
