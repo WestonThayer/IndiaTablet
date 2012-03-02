@@ -4,6 +4,13 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+/**
+ * This is simply a SQLiteOpenHelper. You can see all the literal strings
+ * that make up the SQLite tables and columns here.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class DbHelper extends SQLiteOpenHelper {
 
 	public static final String DB_NAME = "financialdb";
@@ -17,7 +24,7 @@ public class DbHelper extends SQLiteOpenHelper {
 			MembersDbAdapter.COL_NOTES + " text, " +
 			MembersDbAdapter.COL_PIC + " blob, " +
 			MembersDbAdapter.COL_LOAN_AMNT + " integer, " +
-			MembersDbAdapter.COL_LOAN_REASON + " text, " + //update this later
+			MembersDbAdapter.COL_LOAN_REASON + " text, " + // TODO: update this later, not used
 			MembersDbAdapter.COL_LOAN_PROG + " integer, " +
 			MembersDbAdapter.COL_LOAN_DURATION + " integer, " +
 			MembersDbAdapter.COL_LOAN_AMNT_SIM + " integer, " +
@@ -56,6 +63,7 @@ public class DbHelper extends SQLiteOpenHelper {
 		db.execSQL(DB_CREATE_3);
 	}
 
+	// TODO: TERRRIBLE idea haha. You will lose all the data if you try this.
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE IF EXISTS " + MembersDbAdapter.TABLE_NAME);

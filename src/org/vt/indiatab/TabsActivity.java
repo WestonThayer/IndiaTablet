@@ -16,6 +16,23 @@ import android.support.v4.view.MenuItem;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
+/**
+ * An Activity for showing a group's meetings. It has 3 tabs shown by a
+ * ViewPager:
+ * 
+ * - tab1: A list of all members
+ * - tab2: A ledger of all meetings
+ * - tab3: An ideal ledger of all meetings
+ * 
+ * Also contains the logic for advancing meetings.
+ * 
+ * TODO: The database access here is wacky. Each tab Fragment has it's own
+ * reference to a database object. The Activity should probably manage all of
+ * this and the Fragments should ask the Activity.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class TabsActivity extends FragmentActivity {
 
 	private static final String INDEX = "index";
@@ -41,6 +58,7 @@ public class TabsActivity extends FragmentActivity {
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		
+		// TODO: This should be in the strings.xml
 		tab1 = actionBar.newTab().setText("Members");
 		tab2 = actionBar.newTab().setText("Overview");
 		tab3 = actionBar.newTab().setText("Simulator");
@@ -108,6 +126,7 @@ public class TabsActivity extends FragmentActivity {
 	        		actionBar.selectTab(tab1);
 	        	}
 	        	else {
+	        		// Advance using the following formula and notify all tabs.
 		        	// (Last meetings POST_POT) + (#Members * Dues) - Fees
 		        	
 		        	c = groupsDb.fetchGroup(group);
@@ -180,6 +199,10 @@ public class TabsActivity extends FragmentActivity {
 	    }
 	}
 	
+	/**
+	 * Tells every tab Fragment to update its view because the database has
+	 * updated.
+	 */
 	public void notifyTabs() {
 		/*
     	 * This was no fun at all. The Fragment's tag is auto generated

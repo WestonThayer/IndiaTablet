@@ -25,8 +25,16 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+/**
+ * GroupFragment contains the main screen of the app. All groups are listed
+ * here.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class GroupFragment extends Fragment {
 	
+	// Intent extra that holds the name of the relevant group
 	public static final String GROUP_NAME_EXTRA = "group_name_extra";
 	
 	private GroupsDbAdapter groupsDb;
@@ -40,15 +48,17 @@ public class GroupFragment extends Fragment {
 		// Declare that this Fragment can add to the ActionBar and Menu
 		setHasOptionsMenu(true);
 		
+		// Need access to the database throughout the activity
 		groupsDb = new GroupsDbAdapter(getActivity());
 		groupsDb.open();
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {System.out.println("creatingview");
+			Bundle savedInstanceState) {
 		View root = inflater.inflate(R.layout.group_fragment, container, false);
 		lv = (ListView) root.findViewById(R.id.group_listview);
+		
 		String[] from = new String[] {
 				GroupsDbAdapter.COL_NAME,
 				GroupsDbAdapter.COL_DUES,
@@ -64,21 +74,24 @@ public class GroupFragment extends Fragment {
 		
 		Cursor c = groupsDb.fetchGroups();
 		getActivity().startManagingCursor(c);
+		// TODO: A SimpleCursorAdapter works for now. The layout isn't the best
+		// on portrait layout, and not sure if all that info is necessary.
 		adapter = new SimpleCursorAdapter(getActivity(), R.layout.group_row,
 				c, from, to, 0);
 		
 		lv.setAdapter(adapter);
 		
-		// Click to look at group
+		// Click to look at group in the meetings view
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
-				//start the new activity
+				//start the new TabsActivity
 				Intent i = new Intent(getActivity(), TabsActivity.class);
 				i.putExtra(MembersFragment.GROUP_EXTRA, id);
 				
+				// MembersFragment must know what group it's working with
 				TextView name = (TextView) v.findViewById(R.id.group_row_name);
 				i.putExtra(GROUP_NAME_EXTRA, name.getText());
 				

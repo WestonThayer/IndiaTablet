@@ -14,6 +14,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+/**
+ * A Fragment that provides a view of an altered ledger based on the following
+ * rule:
+ * 
+ * IF there is any money left in the pot at the end of a meeting AND there is
+ * a member who does not currently have a loan out, THEN give the entire amount
+ * left in the pot to that member to be paid back in one meeting.
+ * 
+ * This will usually generate a larger capital for the group after a few
+ * meetings, because money in the bank is not gathering interest. It can be beat
+ * if the group is smart and loans out everything for long durations.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class SimulatorFragment extends Fragment {
 	
 	private MeetingsDbAdapter meetingsDb;

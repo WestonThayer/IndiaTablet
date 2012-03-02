@@ -19,6 +19,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+/**
+ * This Fragment provides a view for the unaltered ledger of meetings. It has
+ * several columns:
+ * 
+ * Meeting: the meeting number, starting at 1
+ * pre-Pot: The amount available to loan out after dues and accountant fees have
+ * been paid
+ * In: The amount being added in due to loans paid back at interest this meeting
+ * Out: The amount being loaned out this meeting
+ * post-Pot: The amount remaining in the "bank" after this meeting
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class OverviewFragment extends Fragment {
 	
 	private MeetingsDbAdapter meetingsDb;

@@ -21,6 +21,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+/**
+ * A view that allows for the creation of a new member. The user can add notes,
+ * a name, and a picture chosen from the Android Gallery.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class AddMemberActivity extends FragmentActivity {
 	
 	private ImageButton image;
@@ -38,6 +45,7 @@ public class AddMemberActivity extends FragmentActivity {
 		
 		ActionBar actionBar = getSupportActionBar();
 		
+		// TODO: string.xml again
 		actionBar.setTitle("Add a Member");
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		

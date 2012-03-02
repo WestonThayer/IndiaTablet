@@ -27,6 +27,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 
+/**
+ * A view that allows a member to take a loan out. It mainly consists of two
+ * SeekBars, one that controls the amount and one that controls duration.
+ * 
+ * The ActionBar allows for a custom loan amount, there is also an unimplemented
+ * "Reason" box.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class LoanActivity extends FragmentActivity {
 	
 	public static final String MEMBER_ID_EXTRA = "member_id_extra";

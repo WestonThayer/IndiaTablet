@@ -6,6 +6,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * A class to help with access to the "members" table.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class MembersDbAdapter {
 	
 	public static final String TABLE_NAME = "members";

@@ -12,6 +12,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ActionBar.Tab;
 import android.support.v4.view.ViewPager;
 
+/**
+ * A simple ViewPager that I took from a sample application.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class TabsAdapter extends FragmentPagerAdapter
 		implements ViewPager.OnPageChangeListener, ActionBar.TabListener {
 

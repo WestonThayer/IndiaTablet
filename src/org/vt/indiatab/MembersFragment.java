@@ -25,6 +25,13 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 
+/**
+ * A view for showing all of a group's members, adding them, deleting them, and
+ * taking out and paying loans.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class MembersFragment extends Fragment {
 	
 	public static final String GROUP_EXTRA = "group_extra";
@@ -60,7 +67,7 @@ public class MembersFragment extends Fragment {
 			public void onItemClick(AdapterView<?> parent, View v, int position,
 					long id) {
 				// Check to see if anybody is allowed to take out a loan
-				// (has the game begun)
+				// (has the game begun?)
 				
 				MeetingsDbAdapter meetingsDb = new MeetingsDbAdapter(getActivity());
 				meetingsDb.open();
@@ -116,6 +123,9 @@ public class MembersFragment extends Fragment {
 		return root;
 	}
 	
+	/**
+	 * Refreshes the Adapter's Cursor to the database and updates the views.
+	 */
 	public void changeAdapterCursor() {
 		if (adapter != null) {
 			getActivity().stopManagingCursor(adapter.getCursor());
@@ -143,6 +153,8 @@ public class MembersFragment extends Fragment {
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		// Add the ability to add a member.
+		// TODO: Text should be in strings.xml
 		menu.add(0, TabsActivity.MENU_ADD, 0, "Add Member")
 				.setIcon(R.drawable.add_member_white)
 				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);

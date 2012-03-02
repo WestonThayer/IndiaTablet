@@ -6,6 +6,12 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * A class to aid access to the "meetings" table.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class MeetingsDbAdapter {
 
 	public static final String TABLE_NAME = "meetings";
@@ -42,6 +48,15 @@ public class MeetingsDbAdapter {
 		helper.close();
 	}
 	
+	/**
+	 * Create a new row.
+	 * 
+	 * @param meetingNum	The sequential number associated with this meeting
+	 * @param group			The group this meeting belongs to
+	 * @param initPot		Amount this meeting starts with
+	 * @param initPotSim	Amount the simulated meeting starts with
+	 * @return				Returns a unique row ID
+	 */
 	public long createMeeting(int meetingNum, long group, int initPot,
 			int initPotSim) {
 		ContentValues values = new ContentValues();
@@ -61,6 +76,16 @@ public class MeetingsDbAdapter {
 		return db.insert(TABLE_NAME, null, values);
 	}
 	
+	/**
+	 * Find the meeting for this group that occurred most recently and update
+	 * its columns.
+	 * 
+	 * @param group			The group's unique row ID that the meeting belongs
+	 * 						to
+	 * @param loansIn
+	 * @param loansOut
+	 * @return
+	 */
 	public boolean updateLatestMeeting(long group, int loansIn, int loansOut) {
 		Cursor c = getLatestMeeting(group);
 		long id = c.getLong(c.getColumnIndex(COL_ID));
@@ -90,6 +115,15 @@ public class MeetingsDbAdapter {
 		return db.update(TABLE_NAME, values, COL_ID + "=" + id, null) > 0;
 	}
 	
+	/**
+	 * Find the latest meeting for this group and update it's simulation
+	 * columns.
+	 * 
+	 * @param group
+	 * @param loansIn
+	 * @param loansOut
+	 * @return
+	 */
 	public boolean updateLatestSimMeeting(long group, int loansIn, int loansOut) {
 		Cursor c = getLatestMeeting(group);
 		long id = c.getLong(c.getColumnIndex(COL_ID));
@@ -109,6 +143,12 @@ public class MeetingsDbAdapter {
 		return db.update(TABLE_NAME, values, COL_ID + "=" + id, null) > 0;
 	}
 	
+	/**
+	 * Simple checker to test whether a group has had any meetings yet.
+	 * 
+	 * @param group		The unique row ID of a group
+	 * @return			Returns true if the group does NOT have any meetings
+	 */
 	public boolean isFirstMeeting(long group) {
 		Cursor c = db.query(TABLE_NAME, new String[] {
 				COL_ID
@@ -120,6 +160,13 @@ public class MeetingsDbAdapter {
 		return first;
 	}
 	
+	/**
+	 * Get a Cursor to the latest meeting for a group. Performs a SQL query that
+	 * asks for 1 row that has the highest number in the "meeting_num" column.
+	 * 
+	 * @param group		The unique row ID of a group
+	 * @return			Returns a Cursor to a meeting row (all columns)
+	 */
 	public Cursor getLatestMeeting(long group) {
 		Cursor c = db.query(TABLE_NAME, new String[] {
 				COL_ID,
@@ -144,6 +191,12 @@ public class MeetingsDbAdapter {
 		return c;
 	}
 	
+	/**
+	 * Finds the latest meeting and increments its number.
+	 * 
+	 * @param group
+	 * @return
+	 */
 	public int getNextMeetingNumber(long group) {
 		Cursor c = getLatestMeeting(group);
 		
@@ -160,6 +213,12 @@ public class MeetingsDbAdapter {
 		}
 	}
 	
+	/**
+	 * A small helper function to grab the value in the "meeting_num" column.
+	 * 
+	 * @param c
+	 * @return
+	 */
 	public int getNextMeetingNumber(Cursor c) {		
 		if (c.getCount() == 0) {
 			return 1;
@@ -172,6 +231,13 @@ public class MeetingsDbAdapter {
 		}
 	}
 	
+	/**
+	 * Get a Cursor to all meetings associated with a given group.
+	 * 
+	 * @param group
+	 * @return		Returns a Cursor with all columns related to the normal
+	 * 				ledger
+	 */
 	public Cursor fetchMeetings(long group) {
 		Cursor c = db.query(TABLE_NAME, new String[] {
 				COL_ID,
@@ -189,6 +255,13 @@ public class MeetingsDbAdapter {
 		return c;
 	}
 	
+	/**
+	 * Get a Cursor to all meetings associated with a given group.
+	 * 
+	 * @param group
+	 * @return		Returns a Cursor with all columns related to the simulated
+	 * 				ledger
+	 */
 	public Cursor fetchSimMeetings(long group) {
 		Cursor c = db.query(TABLE_NAME, new String[] {
 				COL_ID,

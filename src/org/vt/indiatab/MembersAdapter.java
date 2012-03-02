@@ -13,6 +13,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+/**
+ * Supplies views that represent individual members. They have a photo, name,
+ * and an optional ProgressBar that shows their loan progress.
+ * 
+ * @author Weston Thayer
+ *
+ */
 public class MembersAdapter extends CursorAdapter {
 
 	private LayoutInflater inflater;
@@ -22,6 +29,13 @@ public class MembersAdapter extends CursorAdapter {
 		inflater = LayoutInflater.from(context);
 	}
 	
+	/**
+	 * FYI, I'm using the pattern described by Lars here:
+	 * http://www.vogella.de/articles/AndroidListView/article.html#listsactivity_performance
+	 * 
+	 * @author Weston Thayer
+	 *
+	 */
 	private class Holder {
 		public ProgressBar progress;
 		public ImageView image;
